@@ -1,0 +1,15 @@
+.h-screen,
+.h-100 {
+  background: radial-gradient(
+    58.43% 103.88% at 56.74% 50%,
+    #0085ff 0%,
+    #003465 100%
+  );
+  position: relative;
+}
+
+.card {
+  z-index: 2;
+  background-color: rgba($color: white, $alpha: 0.28) !important;
+}
+
