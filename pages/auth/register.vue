@@ -145,6 +145,7 @@ type DecorItem = {
   picture: string;
   width: string;
   height: string;
+  reverse?: boolean;
 };
 const decorItems = ref<DecorItem[]>([
   {
@@ -156,6 +157,7 @@ const decorItems = ref<DecorItem[]>([
     picture: "decor2.png",
     width: "12%",
     height: "8%",
+    reverse: true,
   },
   {
     picture: "decor3.png",
@@ -166,6 +168,7 @@ const decorItems = ref<DecorItem[]>([
     picture: "decor3.png",
     width: "10%",
     height: "10%",
+    reverse: true,
   },
   {
     picture: "decor4.png",
@@ -176,6 +179,7 @@ const decorItems = ref<DecorItem[]>([
     picture: "decor5.png",
     width: "15%",
     height: "15%",
+    reverse: true,
   },
   {
     picture: "decor3.png",
