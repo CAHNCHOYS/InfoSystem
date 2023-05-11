@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = (userName: string, email: string) => {
+export const sendEmail = async (userName: string, email: string) => {
   const verifyAccToken = createActivationToken(email);
 
   const options: Mail.Options = {
@@ -30,5 +30,5 @@ export const sendEmail = (userName: string, email: string) => {
     </p>`,
   };
 
-  transporter.sendMail(options);
+  await transporter.sendMail(options);
 };
