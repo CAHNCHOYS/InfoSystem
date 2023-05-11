@@ -7,7 +7,6 @@ export default defineEventHandler(async (event) => {
   const { firstName, secondName, thirdName, email, group, password } =
     await readBody(event);
 
-
   try {
     const [rows] = await dbPool.query(
       `SELECT id FROM starosti WHERE email = '${email}'`
@@ -31,8 +30,8 @@ export default defineEventHandler(async (event) => {
     );
 
     console.log("sending email");
-     sendEmail(firstName, email);
-     console.log("sending endend");
+    await sendEmail(firstName, email);
+    console.log("sending endend");
 
     return {
       isRegisterSuccess: true,
