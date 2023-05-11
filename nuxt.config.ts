@@ -20,8 +20,14 @@ export default defineNuxtConfig({
     DB_USER: process.env.DB_USER,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_NAME: process.env.DB_DATABASE,
+    APP_LINK: process.env.APP_LINK,
+    EMAIL_PASS: process.env.EMAIL_PASS,
+    JWT_ACCESS_KEY: process.env.JWT_ACCESS_KEY,
+    JWT_VERIFYACC_KEY: process.env.JWT_VERIFYACC_KEY,
+    //infosystem2023
+    // emailPass: "kickmeinback", 
     public: {
-      images: "http://localhost:3000/Images",
+      images: "https://info-system.vercel.app/Images",
     },
   },
 });

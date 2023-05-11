@@ -3,11 +3,11 @@ import { PromisePoolConnection } from "mysql2/promise";
 
 let dbPool: PromisePoolConnection;
 
+//mysystempass
 export default defineNitroPlugin((nitro) => {
   const config = useRuntimeConfig();
 
   console.log("nitro is running");
-  console.log(config, "name2");
 
   const pool = mysql2.createPool({
     host: config.DB_HOST,

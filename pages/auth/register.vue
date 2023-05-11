@@ -11,6 +11,24 @@
         Регистрация старосты</v-card-title
       >
 
+      <v-alert
+        type="error"
+        variant="flat"
+        class="mb-5"
+        v-if="registerErrorMessage"
+      >
+        <p class="text-h6">{{ registerErrorMessage }}</p>
+      </v-alert>
+
+      <v-alert
+        type="success"
+        variant="flat"
+        class="mb-5"
+        v-if="isRegisterSuccess"
+      >
+        <p class="text-h6">Регистрация прошла успешно, можете перейти к авторизации. Также подтвердите ваш email!</p>
+      </v-alert>
+
       <v-card-actions>
         <v-form @submit.prevent="registerSubmit" class="w-100">
           <v-row>
@@ -18,7 +36,7 @@
               <v-text-field
                 v-model="email"
                 :error-messages="emailErrors"
-                base-color="white"
+                color="amber-lighten-4"
                 class="text-white"
                 prepend-inner-icon="mdi-email"
                 label="Почта"
@@ -33,6 +51,7 @@
                 class="text-white"
                 prepend-inner-icon="mdi-lock"
                 label="Пароль"
+                color="amber-lighten-4"
                 hint="Пароль для входа на сайт"
               />
             </v-col>
@@ -40,8 +59,9 @@
               <v-text-field
                 v-model="firstName"
                 :error-messages="firstNameErrors"
-                class="text-white"
                 label="Имя"
+                color="amber-lighten-4"
+                class="text-white"
               />
             </v-col>
             <v-col cols="12">
@@ -58,6 +78,7 @@
                 v-model="thirdName"
                 :error-messages="thirdNameErrors"
                 class="text-white"
+                color="amber-lighten-4"
                 label="Отчество"
               />
             </v-col>
@@ -67,6 +88,7 @@
                 :error-messages="groupErrors"
                 prepend-inner-icon="mdi-account-group"
                 class="text-white"
+                color="amber-lighten-4"
                 label="Название группы университета"
               />
             </v-col>
@@ -78,9 +100,22 @@
                 variant="flat"
                 color="indigo-darken-4"
                 :loading="isSubmitting"
+                :disabled="isRegisterSuccess"
               >
                 Зарегистрироваться
               </v-btn>
+            </v-col>
+            <v-col cols="12">
+              <v-expand-transition>
+                <v-btn
+                  block
+                  variant="flat"
+                  color="green"
+                  v-if="isRegisterSuccess"
+                >
+                  <nuxt-link to="/auth/login/starosta" class="text-decoration-none text-white"> Перейти к авторизации </nuxt-link> 
+                </v-btn>
+              </v-expand-transition>
             </v-col>
           </v-row>
         </v-form>
@@ -88,11 +123,15 @@
     </v-card>
 
     <v-img
-      v-for="(decor, n) in decorItems"
+      v-for="(decor, n) in parallaxItems"
       class="d-md-block d-none"
       :key="decor.picture"
       :src="config.public.images + `/Register/${decor.picture}`"
-      :class="['decor-item', 'decor-item_' + (n + 1)]"
+      :class="[
+        'decor-item',
+        'decor-item_' + (n + 1),
+        decor.reverse ? 'reverse' : '',
+      ]"
       :width="decor.width"
       :height="decor.height"
     />
@@ -100,6 +139,7 @@
 </template>
 
 <script setup lang="ts">
+import { NuxtError } from "nuxt/app";
 import type { RegisterForm } from "~/types/forms";
 definePageMeta({
   layout: "login",
@@ -110,7 +150,7 @@ const config = useRuntimeConfig();
 //Валидация формы----------------------------------------------------------
 const { registerSchema } = useFormSchemas();
 
-const { handleSubmit, handleReset, isSubmitting } = useForm<RegisterForm>({
+const { handleSubmit, isSubmitting } = useForm<RegisterForm>({
   validationSchema: registerSchema,
 });
 
@@ -126,67 +166,32 @@ const { value: group, errorMessage: groupErrors } = useField("group");
 
 //--------------------------------------------------------------------------
 
-const registerSubmit = handleSubmit(async (registerPayload) => {
+const registerErrorMessage = ref<string | null>(null);
+const isRegisterSuccess = ref(false);
+
+const registerSubmit = handleSubmit(async (registerPayload: RegisterForm) => {
   console.log(registerPayload);
 
   try {
-    const data = await $fetch("/api/auth/register", {
+    await $fetch("/api/auth/register", {
       method: "POST",
       body: registerPayload,
     });
-    console.log(data);
+
+    isRegisterSuccess.value = true;
+    registerErrorMessage.value = null;
   } catch (error) {
-    console.log(error);
+    if ((error as NuxtError).statusCode === 406) {
+      registerErrorMessage.value =
+        "Староста с таким email уже был зарегистрирован, войдите в аккаунт!";
+    } else {
+      registerErrorMessage.value =
+        "Ошибка на сервере, возможно База данных недоступна!";
+    }
   }
 });
 
-//Decorations ---------------------------------
-type DecorItem = {
-  picture: string;
-  width: string;
-  height: string;
-  reverse?: boolean;
-};
-const decorItems = ref<DecorItem[]>([
-  {
-    picture: "decor1.png",
-    width: "33%",
-    height: "59%",
-  },
-  {
-    picture: "decor2.png",
-    width: "12%",
-    height: "8%",
-    reverse: true,
-  },
-  {
-    picture: "decor3.png",
-    width: "10%",
-    height: "10%",
-  },
-  {
-    picture: "decor3.png",
-    width: "10%",
-    height: "10%",
-    reverse: true,
-  },
-  {
-    picture: "decor4.png",
-    width: "33%",
-    height: "18%",
-  },
-  {
-    picture: "decor5.png",
-    width: "15%",
-    height: "15%",
-    reverse: true,
-  },
-  {
-    picture: "decor3.png",
-    width: "10%",
-    height: "10%",
-  },
-]);
+const { parallaxItems } = useAuthMouseParallax();
 </script>
 
 <style lang="scss" scoped>
@@ -226,7 +231,7 @@ const decorItems = ref<DecorItem[]>([
   &_6 {
     top: 0;
     left: calc(512 / 1920 * 100%);
-    transform: translate(0, -10%);
+    transform: translate(0, -40%);
   }
 
   &_7 {
