@@ -5,12 +5,15 @@ import { createActivationToken } from "./tokens";
 const config = useRuntimeConfig();
 
 const transporter = nodemailer.createTransport({
+  name: "smtp.mail.ru",
   host: "smtp.mail.ru",
   port: 465,
-  secure: true, 
+  secure: true,
+  logger: true,
+
   auth: {
     user: "infosystem2023@mail.ru",
-    pass: config.EMAIL_PASS,
+    pass: "PZkyA8QgdNmUNs68S2qs",
   },
 });
 
