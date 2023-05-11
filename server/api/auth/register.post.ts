@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
            VALUES ('${firstName}', '${secondName}', '${thirdName}', '${email}', '${hashedPassword}', '${group}')`
     );
 
+    console.log("sending email");
      sendEmail(firstName, email);
 
     return {
