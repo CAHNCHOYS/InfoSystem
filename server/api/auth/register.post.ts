@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
 
     console.log("sending email");
      sendEmail(firstName, email);
+     console.log("sending endend");
 
     return {
       isRegisterSuccess: true,
