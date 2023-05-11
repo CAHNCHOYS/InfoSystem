@@ -30,11 +30,5 @@ export const sendEmail = (userName: string, email: string) => {
     </p>`,
   };
 
-  transporter.sendMail(options, (err, info) => {
-    if (!err) {
-      console.log(info);
-    } else {
-      console.log(err);
-    }
-  });
+  transporter.sendMail(options);
 };
