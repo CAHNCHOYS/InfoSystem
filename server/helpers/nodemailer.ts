@@ -6,16 +6,17 @@ const config = useRuntimeConfig();
 
 const transporter = nodemailer.createTransport({
   host: "smtp.mail.ru",
+  port: 465,
+  secure: true, 
   auth: {
     user: "infosystem2023@mail.ru",
-    pass: "PZkyA8QgdNmUNs68S2qs",
+    pass: config.EMAIL_PASS,
   },
 });
 
 export const sendEmail = (userName: string, email: string) => {
   const verifyAccToken = createActivationToken(email);
 
-  console.log(config);
   const options: Mail.Options = {
     from: "infosystem2023@mail.ru",
     to: email,
