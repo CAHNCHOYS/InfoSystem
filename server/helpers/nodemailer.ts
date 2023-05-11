@@ -4,20 +4,20 @@ import { createActivationToken } from "./tokens";
 
 const config = useRuntimeConfig();
 
-export const sendEmail = async (userName: string, email: string) => {
-  const transporter = await nodemailer.createTransport({
-    name: "smtp.mail.ru",
-    host: "smtp.mail.ru",
-    port: 465,
-    secure: true,
+const transporter = nodemailer.createTransport({
+  name: "smtp.mail.ru",
+  host: "smtp.mail.ru",
+  port: 465,
+  secure: true,
+  logger: true,
 
-    logger: true,
+  auth: {
+    user: "infosystem2023@mail.ru",
+    pass: "PZkyA8QgdNmUNs68S2qs",
+  },
+});
 
-    auth: {
-      user: "infosystem2023@mail.ru",
-      pass: "PZkyA8QgdNmUNs68S2qs",
-    },
-  });
+export const sendEmail = (userName: string, email: string) => {
   const verifyAccToken = createActivationToken(email);
 
   const options: Mail.Options = {
@@ -30,11 +30,11 @@ export const sendEmail = async (userName: string, email: string) => {
     </p>`,
   };
 
-  await transporter.sendMail(options, (err, info) => {
+  transporter.sendMail(options, (err, info) => {
     if (!err) {
       console.log(info);
     } else {
-      console.log(err, "error");
+      console.log(err);
     }
   });
 };
