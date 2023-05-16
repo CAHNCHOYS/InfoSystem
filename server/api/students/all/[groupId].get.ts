@@ -12,9 +12,10 @@ export default defineEventHandler(async (event) => {
 
     return students;
   } catch (error) {
+    console.log(error);
     throw createError({
       statusCode: 500,
-      message: "Ошибка при отправке запроса с базы данных!",
+      message: (error as Error).message,
     });
   }
 
