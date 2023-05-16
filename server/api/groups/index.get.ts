@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
     )) as RowDataPacket[];
     return groups;
   } catch (error) {
+    console.log(error);
     throw createError({
       statusCode: 500,
       message: "Ошибка при получении данных с БД",
