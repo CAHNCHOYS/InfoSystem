@@ -6,7 +6,7 @@
       max-width="640"
     >
       <v-card-title
-        class="text-white text-h5 pa-0 mb-5 font-weight-bold text-wrap text-sm-left text-center"
+        class="text-white text-h5 pa-0 mb-10 font-weight-bold text-wrap text-sm-left text-center"
       >
         Регистрация старосты</v-card-title
       >
@@ -26,7 +26,10 @@
         class="mb-5"
         v-if="isRegisterSuccess"
       >
-        <p class="text-h6">Регистрация прошла успешно, можете перейти к авторизации. Также подтвердите ваш email!</p>
+        <p class="text-h6">
+          Регистрация прошла успешно, можете перейти к авторизации. Также
+          подтвердите ваш email!
+        </p>
       </v-alert>
 
       <v-card-actions>
@@ -36,7 +39,7 @@
               <v-text-field
                 v-model="email"
                 :error-messages="emailErrors"
-                color="amber-lighten-4"
+                color="white"
                 class="text-white"
                 prepend-inner-icon="mdi-email"
                 label="Почта"
@@ -47,11 +50,10 @@
               <v-text-field
                 v-model="password"
                 :error-messages="passwordErrors"
-                base-color="white"
                 class="text-white"
                 prepend-inner-icon="mdi-lock"
                 label="Пароль"
-                color="amber-lighten-4"
+                color="white"
                 hint="Пароль для входа на сайт"
               />
             </v-col>
@@ -60,7 +62,7 @@
                 v-model="firstName"
                 :error-messages="firstNameErrors"
                 label="Имя"
-                color="amber-lighten-4"
+                color="white"
                 class="text-white"
               />
             </v-col>
@@ -78,19 +80,28 @@
                 v-model="thirdName"
                 :error-messages="thirdNameErrors"
                 class="text-white"
-                color="amber-lighten-4"
                 label="Отчество"
               />
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="group"
-                :error-messages="groupErrors"
+              <v-autocomplete
+                v-if="!groupsFetchError"
+                v-model="groupId"
+                :items="allGroups || []"
+                item-title="name"
+                item-value="id"
+                :error-messages="groupIdErrors"
                 prepend-inner-icon="mdi-account-group"
                 class="text-white"
-                color="amber-lighten-4"
                 label="Название группы университета"
+                no-data-text="Группы не найдены"
               />
+              <v-alert variant="flat" type="error" v-else>
+                <p class="text-h6">
+                  Ошибка при получении групп, регистрация невозможна, повторите
+                  попытку позже!
+                </p>
+              </v-alert>
             </v-col>
 
             <v-col cols="12">
@@ -104,17 +115,27 @@
               >
                 Зарегистрироваться
               </v-btn>
+              <p class="mt-2 text-white text-h6" v-if="!isRegisterSuccess">
+                Уже есть аккаунт?
+                <nuxt-link
+                  class="text-yellow font-weight-bold"
+                  to="/auth/login/starosta"
+                  >Авторизироваться</nuxt-link
+                >
+              </p>
             </v-col>
+
             <v-col cols="12">
               <v-expand-transition>
-                <v-btn
-                  block
-                  variant="flat"
-                  color="green"
+                <nuxt-link
+                  to="/auth/login/starosta"
+                  class="d-block"
                   v-if="isRegisterSuccess"
                 >
-                  <nuxt-link to="/auth/login/starosta" class="text-decoration-none text-white"> Перейти к авторизации </nuxt-link> 
-                </v-btn>
+                  <v-btn block variant="flat" color="green">
+                    Перейти к авторизации
+                  </v-btn>
+                </nuxt-link>
               </v-expand-transition>
             </v-col>
           </v-row>
@@ -141,6 +162,7 @@
 <script setup lang="ts">
 import { NuxtError } from "nuxt/app";
 import type { RegisterForm } from "~/types/forms";
+import type { IStudentGroup } from "~/types/core";
 definePageMeta({
   layout: "login",
 });
@@ -162,16 +184,19 @@ const { value: thirdName, errorMessage: thirdNameErrors } =
   useField("thirdName");
 const { value: email, errorMessage: emailErrors } = useField("email");
 const { value: password, errorMessage: passwordErrors } = useField("password");
-const { value: group, errorMessage: groupErrors } = useField("group");
+const { value: groupId, errorMessage: groupIdErrors } = useField("groupId");
 
 //--------------------------------------------------------------------------
+
+const { data: allGroups, error: groupsFetchError } = await useFetch<
+  IStudentGroup[]
+>("/api/groups");
 
 const registerErrorMessage = ref<string | null>(null);
 const isRegisterSuccess = ref(false);
 
 const registerSubmit = handleSubmit(async (registerPayload: RegisterForm) => {
   console.log(registerPayload);
-
   try {
     await $fetch("/api/auth/register", {
       method: "POST",
@@ -186,57 +211,15 @@ const registerSubmit = handleSubmit(async (registerPayload: RegisterForm) => {
         "Староста с таким email уже был зарегистрирован, войдите в аккаунт!";
     } else {
       registerErrorMessage.value =
-        "Ошибка на сервере, возможно База данных недоступна!";
+        "Ошибка на при регистрации, возможно, староста выбранной группы уже зарегистрирован, или база данных недоступна!";
     }
   }
 });
 
+//Параллакс при движении мыши
 const { parallaxItems } = useAuthMouseParallax();
 </script>
 
 <style lang="scss" scoped>
 @import "~/assets/scss/auth.scss";
-
-.decor-item {
-  position: absolute;
-  z-index: 1;
-
-  &_1 {
-    width: 500px;
-    height: 500px;
-    top: calc(101 / 1080 * 100%);
-    right: calc(320 / 1920 * 100%);
-  }
-
-  &_2 {
-    top: calc(484 / 1080 * 100%);
-    left: calc(378 / 1920 * 100%);
-  }
-
-  &_3 {
-    top: calc(788 / 1080 * 100%);
-    right: calc(479 / 1920 * 100%);
-  }
-
-  &_4 {
-    top: calc(868 / 1080 * 100%);
-    right: calc(380 / 1920 * 100%);
-  }
-
-  &_5 {
-    top: calc(868 / 1080 * 100%);
-    left: calc(280 / 1920 * 100%);
-  }
-
-  &_6 {
-    top: 0;
-    left: calc(512 / 1920 * 100%);
-    transform: translate(0, -40%);
-  }
-
-  &_7 {
-    top: calc(218 / 1080 * 100%);
-    left: calc(280 / 1920 * 100%);
-  }
-}
 </style>

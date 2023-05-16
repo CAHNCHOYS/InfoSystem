@@ -1,42 +1,42 @@
 import { dbPool } from "~/server/plugins/database";
 import bcrypt from "bcryptjs";
 import type { RowDataPacket } from "mysql2";
-import { sendEmail } from "~/server/helpers/nodemailer";
+import { sendEmail } from "~/server/services/nodemailer";
 
 export default defineEventHandler(async (event) => {
-  const { firstName, secondName, thirdName, email, group, password } =
+  const { firstName, secondName, thirdName, email, groupId, password } =
     await readBody(event);
 
+  console.log(groupId);
   try {
-    const [rows] = await dbPool.query(
-      `SELECT id FROM starosti WHERE email = '${email}'`
-    );
+    const [emails] = (await dbPool.query(
+      `SELECT id FROM starosti WHERE email = '${email}' LIMIT 1`
+    )) as RowDataPacket[];
 
-    if ((rows as RowDataPacket[]).length >= 1) {
+    if (emails.length >= 1) {
       return createError({
         statusCode: 406,
         message: "Такой пользователь уже есть!",
       });
     }
 
-    const salt = bcrypt.genSaltSync(6);
+    const salt = bcrypt.genSaltSync(5);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     console.log(hashedPassword, "password");
 
     const [] = await dbPool.query(
-      `INSERT INTO starosti (first_name, second_name, third_name, email, password, group_name)
-           VALUES ('${firstName}', '${secondName}', '${thirdName}', '${email}', '${hashedPassword}', '${group}')`
+      `INSERT INTO starosti (firstName, secondName, thirdName, email, password, groupId)
+           VALUES ('${firstName}', '${secondName}', '${thirdName}', '${email}', '${hashedPassword}', '${groupId}')`
     );
 
-    console.log("sending email");
-    await sendEmail(firstName, email);
-    console.log("sending endend");
+    //   await sendEmail(firstName, email);
 
     return {
-      isRegisterSuccess: true,
+      isRegistered: true,
     };
   } catch (error) {
+    console.log(error);
     throw createError({
       statusCode: 500,
       message: (error as Error).message,

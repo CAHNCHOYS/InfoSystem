@@ -5,11 +5,55 @@
     #0085ff 0%,
     #003465 100%
   );
+//  background-color: cornflowerblue !important;
   position: relative;
 }
 
 .card {
   z-index: 2;
-  background-color: rgba($color: whitesmoke, $alpha: 0.1) !important;
+  background-color: rgba($color: whitesmoke, $alpha: 0.34) !important;
+}
+
+.decor-item {
+  position: absolute;
+  z-index: 1;
+
+  &_1 {
+    width: 500px;
+    height: 500px;
+    top: calc(101 / 1080 * 100%);
+    right: calc(320 / 1920 * 100%);
+  }
+
+  &_2 {
+    top: calc(484 / 1080 * 100%);
+    left: calc(378 / 1920 * 100%);
+  }
+
+  &_3 {
+    top: calc(788 / 1080 * 100%);
+    right: calc(479 / 1920 * 100%);
+  }
+
+  &_4 {
+    top: calc(868 / 1080 * 100%);
+    right: calc(380 / 1920 * 100%);
+  }
+
+  &_5 {
+    top: calc(868 / 1080 * 100%);
+    left: calc(280 / 1920 * 100%);
+  }
+
+  &_6 {
+    top: 0;
+    left: calc(512 / 1920 * 100%);
+    transform: translate(0, -40%);
+  }
+
+  &_7 {
+    top: calc(218 / 1080 * 100%);
+    left: calc(280 / 1920 * 100%);
+  }
 }
 

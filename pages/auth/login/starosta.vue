@@ -1,96 +1,193 @@
 <template>
-  <div class="h-100">
-    <v-row class="login-row overflow-auto" no-gutters>
-      <v-col cols="6" class="d-flex align-center justify-center pa-2">
-        <v-card color="#24221F" class="flex-grow-1 pa-6" max-width="512">
-          <v-card-actions>
-            <v-form @submit.prevent="" class="w-75 mx-auto py-6">
-              <h2 class="text-white mb-12">
-                <v-icon icon="mdi-exit-run yellow-text pr-2" /> Авторизация
-                старосты
-              </h2>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    variant="outlined"
-                    label="Email"
-                    color="#FFC632"
-                    class="text-white"
-                  >
-                    <template #prepend-inner>
-                      <v-icon icon="mdi-email" />
-                    </template>
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    variant="outlined"
-                    label="Пароль"
-                    color="#FFC632"
-                    class="text-white"
-                    :type="isPasswordShown ? 'text' : 'password'"
-                    :append-inner-icon="
-                      isPasswordShown ? 'mdi-eye-off' : 'mdi-eye'
-                    "
-                    @click:append-inner="isPasswordShown = !isPasswordShown"
-                  >
-                    <template #prepend-inner>
-                      <v-icon icon="mdi-lock" />
-                    </template>
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    block
-                    color="#FFC632"
-                    class="mb-4"
-                    variant="flat"
-                    height="55"
-                    type="submit"
-                  >
-                    <span class="btn-text font-weight-bold">Войти</span>
-                  </v-btn>
-                  <p class="yellow-text text-center">
-                    Нет аккаунта ?
-                    <NuxtLink
-                      to="/Auth/register"
-                      class="font-weight-bold yellow-text text-decoration-none"
-                      >Создать</NuxtLink
-                    >
-                  </p>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="h-screen">
-        <v-img
-          :src="config.public.images + '/Login/Content.jpg'"
-          max-height="100%"
-          height="100%"
-          min-height="300px"
-          cover
-        />
-      </v-col>
-    </v-row>
+  <div class="h-100 d-flex justify-center align-center overflow-auto pa-5">
+    <v-card
+      class="flex-grow-1 card rounded-lg pa-sm-16 pa-5 overflow-auto"
+      elevation="10"
+      max-width="640"
+    >
+      <v-card-title
+        class="text-white text-h5 pa-0 mb-10 font-weight-bold text-wrap text-sm-left text-center"
+      >
+        Авторизация старосты
+      </v-card-title>
+
+      <v-scale-transition>
+        <v-alert
+          type="success"
+          variant="flat"
+          class="mb-5"
+          v-if="isLoginSuccess"
+        >
+          <p class="text-h6">
+            Авторизация прошла успешна, вскоре вы будете переведены на главную
+            страницу!
+          </p>
+        </v-alert>
+      </v-scale-transition>
+
+      <v-scale-transition>
+        <v-alert
+          type="error"
+          variant="flat"
+          class="mb-5"
+          v-if="loginErrorMessage"
+        >
+          <p class="text-h6">{{ loginErrorMessage }}</p>
+        </v-alert>
+      </v-scale-transition>
+
+      <v-card-actions>
+        <v-form @submit.prevent="handleLogin" class="w-100">
+          <v-row>
+            <v-col cols="12">
+              <v-autocomplete
+                v-if="allGroups.length"
+                v-model="groupId"
+                :items="allGroups"
+                item-title="name"
+                item-value="id"
+                :error-messages="groupIdErrors"
+                prepend-inner-icon="mdi-account-group"
+                class="text-white"
+                label="Название группы университета"
+                no-data-text="Группы не найдены"
+              />
+              <v-alert type="error" variant="flat" v-else>
+                <p class="text-h6">
+                  Ошибка при загрузке групп для авторизации, повторите попытку
+                  позже
+                </p>
+              </v-alert>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="password"
+                :error-messages="passwordErrors"
+                variant="outlined"
+                class="text-white"
+                label="Пароль"
+                color="white"
+                :type="isPasswordShown ? 'text' : 'password'"
+                prepend-inner-icon="mdi-lock"
+                :append-inner-icon="isPasswordShown ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="isPasswordShown = !isPasswordShown"
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <v-btn
+                type="submit"
+                variant="flat"
+                block
+                color="green"
+                :loading="isSubmitting"
+              >
+                Войти
+              </v-btn>
+              <p class="text-h6 text-white mt-2">
+                Нет аккаунта ?
+                <nuxt-link
+                  to="/auth/register"
+                  class="font-weight-bold text-yellow"
+                >
+                  Создать
+                </nuxt-link>
+              </p>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-actions>
+    </v-card>
+
+    <v-img
+      v-for="(decor, n) in parallaxItems"
+      class="d-md-block d-none"
+      :key="decor.picture"
+      :src="config.public.images + `/Register/${decor.picture}`"
+      :class="[
+        'decor-item',
+        'decor-item_' + (n + 1),
+        decor.reverse ? 'reverse' : '',
+      ]"
+      :width="decor.width"
+      :height="decor.height"
+    />
   </div>
 </template>
-
 <script setup lang="ts">
+import { useAuthStore } from "~/stores/auth";
+import { NuxtError } from "nuxt/app";
+import type { LoginForm } from "~/types/forms";
+import type { IStarostaUser, IStudentGroup } from "~/types/core";
+
 definePageMeta({
   layout: "login",
 });
+
 const config = useRuntimeConfig();
 
-const isPasswordShown = ref(false);
+//-----------Валидация формы -------------------------------------------
+const { loginSchema } = useFormSchemas();
 
-const formSubmit = async () => {
-  console.log("submitted");
-};
+const { handleSubmit, resetForm, isSubmitting } = useForm<LoginForm>({
+  validationSchema: loginSchema,
+});
+
+const { value: groupId, errorMessage: groupIdErrors } = useField("groupId");
+const { value: password, errorMessage: passwordErrors } = useField("password");
+//-----------------------------------------------------------------------
+
+//Авторизация------------------------------------------------------------
+const allGroups = ref<IStudentGroup[]>([]);
+const { data, error: groupsFetchError } = await useFetch<IStudentGroup[]>(
+  "/api/groups"
+);
+if (data.value) {
+  allGroups.value = data.value;
+}
+
+const isPasswordShown = ref(false);
+const loginErrorMessage = ref<string | null>(null);
+const isLoginSuccess = ref(false);
+
+const authStore = useAuthStore();
+const route = useRoute();
+
+const handleLogin = handleSubmit(async (loginPayload: LoginForm) => {
+  try {
+    const starosta = await $fetch<IStarostaUser>("/api/auth/login/starosta", {
+      method: "POST",
+      body: loginPayload,
+    });
+    isLoginSuccess.value = true;
+    loginErrorMessage.value = null;
+    authStore.setUser(starosta);
+    setTimeout(async () => {
+      if (route.query.redirectedFrom) {
+        await navigateTo(route.query.redirectedFrom as string);
+      } else await navigateTo("/");
+    }, 2000);
+  } catch (error) {
+    const err = error as NuxtError;
+    if (err.statusCode === 404) {
+      loginErrorMessage.value =
+        "Староста выбранной группы на зарегистрирован! Создайте аккаунт или выберете другую группу";
+    } else if (err.statusCode === 400) {
+      loginErrorMessage.value =
+        "Неверный пароль от аккаунта,  повторите попытку!";
+    } else {
+      loginErrorMessage.value =
+        "Ошибка на сервере, возможно, база данных недоступна, повторите попытку позже!";
+    }
+    resetForm();
+  }
+});
+
+//----------------------------------------------------------------------------------------
+
+const { parallaxItems } = useAuthMouseParallax();
 </script>
 
 <style lang="scss" scoped>
 @import "~/assets/scss/auth.scss";
-
 </style>

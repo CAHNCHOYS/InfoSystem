@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   host: "smtp.mail.ru",
   port: 465,
   secure: true,
-  logger: true,
+  // logger: true,
 
   auth: {
     user: "infosystem2023@mail.ru",

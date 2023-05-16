@@ -34,11 +34,40 @@ export const useFormSchemas = () => {
           return value !== value.toLowerCase();
         }
       ),
-    group: string()
-      .required("Поле обязательное для ввода")
-      .min(4, "Слишком короткое имя группы")
-      .max(10, "Слишком длинное имя группы"),
+    groupId: number()
+      .required("Поле обязательное для ввода!")
+      .typeError("Введите группу!"),
   });
 
-  return { registerSchema };
+  const loginSchema = object({
+    groupId: number()
+      .required("Поле обязательное для ввода!")
+      .typeError("Введите группу!"),
+    password: string()
+      .required("Поле обязательное для ввода")
+      .min(4, "Слишком короткий пароль")
+      .max(40, "Слишком много символов"),
+  });
+
+  const studentSchema = checkNameSchema.shape({
+    phone: string()
+      .required("Поле обязательное для ввода")
+      .min(4, "Слишком короткий номер телефона")
+      .max(20, "Силшком длинный номер телефона"),
+    address: string()
+      .required("Поле обязательное для ввода")
+      .min(6, "Слишком короткий адрес")
+      .max(50, "Силшком длинный адрес"),
+    dateOfBirth: date()
+      .required("Поле обязательное для ввода")
+      .min("1992-12-30", "Минимало доступная  дата для добавления: 30.12.1992")
+      .max(
+        "2010-12-30",
+        "Максимально доступная  дата для добавления: 30.12.2010"
+      )
+      .typeError("Выберете дату!"),
+    language: string().required("Выберете иностранный язык!").default("Английский"),
+  });
+
+  return { registerSchema, loginSchema, studentSchema };
 };

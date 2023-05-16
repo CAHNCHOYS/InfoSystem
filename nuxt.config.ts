@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   css: ["vuetify/lib/styles/main.sass"],
+  alias: {
+    pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
+  },
   build: {
     transpile: ["vuetify"],
   },
@@ -14,6 +17,12 @@ export default defineNuxtConfig({
         autoImports: true,
       },
     ],
+    [
+      "@pinia/nuxt",
+      {
+        autoImports: ["defineStore", "storeToRefs"],
+      },
+    ],
   ],
   runtimeConfig: {
     DB_HOST: process.env.DB_HOST,
@@ -25,7 +34,7 @@ export default defineNuxtConfig({
     JWT_ACCESS_KEY: process.env.JWT_ACCESS_KEY,
     JWT_VERIFYACC_KEY: process.env.JWT_VERIFYACC_KEY,
     //infosystem2023
-    // emailPass: "kickmeinback", 
+    // emailPass: "kickmeinback",
     public: {
       images: "https://info-system.vercel.app/Images",
     },

@@ -3,15 +3,13 @@
     class="h-screen overflow-auto d-flex justify-center align-center bg-blue"
   >
     <v-card class="pa-8 flex-grow-1" max-width="480">
-      <v-card-title class="text-wrap mb-4 pa-0 text-h5">
+      <v-card-title class="text-wrap mb-4 pa-0 py-2 text-h4">
         Подтверждение аккаунта
       </v-card-title>
 
       <v-card-text class="text-h6 pa-0 mb-8">
         <p class="text-error" v-if="error">
-          Ошибка при подтверждении аккаунта, код подвтерждения невалиден или
-          истекло время активации. Отправьте новый код на почту с личного
-          кабинета.
+          {{ errorMessage }}
         </p>
         <p class="text-success" v-else>Аккаунт успешно активирован!</p>
       </v-card-text>
@@ -41,17 +39,32 @@
 </template>
 
 <script setup lang="ts">
+import  type { NuxtError } from "nuxt/app";
+
 definePageMeta({
   layout: "login",
 });
 
 const route = useRoute();
+
+const errorMessage = ref<string>("");
+
 const { data, error } = await useFetch(
   "/api/auth/verify/" + route.params.token,
   {
     method: "patch",
   }
 );
+if (error.value) {
+  console.log((error.value as NuxtError).statusCode);
+  if ((error.value as NuxtError).statusCode === 400) {
+    errorMessage.value = ` Ошибка при подтверждении аккаунта, код подвтерждения невалиден или
+          истекло время активации. Отправьте новый код на почту с личного
+          кабинета.`;
+  } else {
+    errorMessage.value = `Ошибка на сервере, возможно база данных недоступна!`;
+  }
+}
 </script>
 
 <style scoped></style>
