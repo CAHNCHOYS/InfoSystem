@@ -4,7 +4,7 @@ import type { RowDataPacket } from "mysql2";
 export default defineEventHandler(async (event) => {
   try {
     const [groups] = (await dbPool.query(
-      "SELECT * FROM groups"
+      "SELECT * FROM university_groups"
     )) as RowDataPacket[];
     return groups;
   } catch (error) {
