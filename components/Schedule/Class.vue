@@ -75,7 +75,7 @@ watch(
 );
 
 const toggleEdit = () => {
-  // newClassName.value = props.className;
+  newClassName.value = props.scheduleClass?.className || "Нет пары";
   isUserEditing.value = !isUserEditing.value;
 };
 

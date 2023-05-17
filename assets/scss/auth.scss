@@ -5,13 +5,13 @@
     #0085ff 0%,
     #003465 100%
   );
-//  background-color: cornflowerblue !important;
+  //  background-color: cornflowerblue !important;
   position: relative;
 }
 
 .card {
   z-index: 2;
-  background-color: rgba($color: whitesmoke, $alpha: 0.34) !important;
+  background-color: rgba($color: lightskyblue, $alpha: 0.452) !important;
 }
 
 .decor-item {
@@ -56,4 +56,3 @@
     left: calc(280 / 1920 * 100%);
   }
 }
-

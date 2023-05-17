@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
   try {
     const { groupId, password } = await readBody<LoginForm>(event);
     const [users] = (await dbPool.query(
-      `SELECT starosti.id, firstName, secondName, thirdName, password, email, groups.name as groupName, groupId, isActivated
-       FROM starosti INNER JOIN groups ON groups.id = starosti.groupId
+      `SELECT starosti.id, firstName, secondName, thirdName, password, email, university_groups.name as groupName, groupId, isActivated
+       FROM starosti INNER JOIN university_groups ON university_groups.id = starosti.groupId
        WHERE starosti.groupId = '${groupId}' LIMIT 1`
     )) as RowDataPacket[];
     if (users.length <= 0) {
@@ -32,8 +32,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    user.role = "starosta";
-    const accessToken = createAccessToken(groupId, "starosta");
+    user.role = "староста";
+    const accessToken = createAccessToken(groupId, "староста");
 
     setCookie(event, "token", accessToken, {
       maxAge: 24 * 60 * 60,

@@ -1,5 +1,5 @@
 <template>
-  <h3 class="text-sm-h4 text-h5 mb-5">
+  <h3 class="text-sm-h4 text-h5 mb-7">
     Расписание группы {{ authStore.currentUser?.groupName }} на текущий семестр
   </h3>
   <v-card color="white" elevation="4" class="pa-md-5 pa-2 mx-sm-0 mx-n3">
@@ -38,7 +38,7 @@
       </div>
     </v-card-title>
 
-    <v-card-text v-if="!scheduleFetchError">
+    <v-card-actions class="d-block" v-if="!scheduleFetchError">
       <v-row class="mb-2">
         <v-col
           v-for="{ icon, day, isLoading, error } in scheduleCols"
@@ -75,6 +75,7 @@
               <p class="text-h6">{{ error }}</p>
             </v-alert>
           </v-sheet>
+
         </v-col>
       </v-row>
       <div>
@@ -87,7 +88,7 @@
           Очистить расписание
         </v-btn>
       </div>
-    </v-card-text>
+    </v-card-actions>
 
     <v-alert type="error" v-else>
       <p class="text-h6">
@@ -223,6 +224,9 @@ const addSchedule = async (
   const addCol = scheduleCols.value.find((col) => col.day === day)!;
   try {
     addCol.isLoading = true;
+    await new Promise((res) => {
+      setTimeout(() => res("done"), 3500);
+    });
     await $fetch("/api/schedule", {
       method: "POST",
       body: {

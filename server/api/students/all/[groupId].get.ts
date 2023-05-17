@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     const [students] =
       await dbPool.query(`SELECT group_students.id, firstName, secondName, thirdName, DATE_FORMAT(dateOfBirth, "%d-%m-%Y") as dateOfBirth, phone, address 
-    FROM group_students INNER JOIN groups on groups.id = group_students.groupId WHERE group_students.groupId = ${groupId}`);
+    FROM group_students INNER JOIN university_groups on university_groups.id = group_students.groupId WHERE group_students.groupId = ${groupId}`);
 
     return students;
   } catch (error) {
@@ -18,5 +18,4 @@ export default defineEventHandler(async (event) => {
       message: (error as Error).message,
     });
   }
-
 });

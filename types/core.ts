@@ -1,4 +1,4 @@
-export type UserRole = "starosta" | "student";
+export type UserRole = "староста" | "студент";
 export type WeekDays = "Понедельник" | "Вторник" | "Среда" | "Четверг" | "Пятница";
 export type WeekType = "Верхняя" | "Нижняя" | "Обе";
 
@@ -12,14 +12,14 @@ export interface IStarostaUser {
   groupName: string;
   groupId: number;
   isActivated: 0 | 1; //Активирован ли аккаунт
-  role: "starosta";
+  role: "староста";
 }
 
 export interface IStudentUser {
   fullName: string;
   groupName: string;
   groupId: number;
-  role: "student";
+  role: "студент";
 }
 
 export interface IStudent {

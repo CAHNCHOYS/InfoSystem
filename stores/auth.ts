@@ -1,5 +1,4 @@
 import { IStarostaUser, IStudentUser } from "~/types/core";
-import { GetUserResponse } from "~/types/responses";
 
 export const useAuthStore = defineStore("authStore", () => {
   const currentUser = ref<IStudentUser | IStarostaUser | null>(null);
@@ -24,8 +23,16 @@ export const useAuthStore = defineStore("authStore", () => {
     }
   }
 
-  function logOutUser() {
-    
+  async function logOutUser() {
+    try {
+      await $fetch("/api/auth/logout", {
+        credentials: "include",
+      });
+      isUserLoggedIn.value = false;
+      currentUser.value = null;
+    } catch (error) {
+      throw error;
+    }
   }
 
   return {
@@ -33,5 +40,6 @@ export const useAuthStore = defineStore("authStore", () => {
     currentUser,
     setUser,
     getUser,
+    logOutUser,
   };
 });

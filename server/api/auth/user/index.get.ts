@@ -7,7 +7,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log("verifiin token from backend");
 
     const token = getCookie(event, "token")!;
 
@@ -16,14 +15,14 @@ export default defineEventHandler(async (event) => {
     const authUser = verifyAccessToken(token) as JwtPayload;
 
     console.log(authUser, "user");
-    if (authUser.role === "starosta") {
+    if (authUser.role === "староста") {
       const [users] = (await dbPool.query(
-        `SELECT starosti.id, firstName, secondName, thirdName, password, email, groups.name as groupName, groupId,  isActivated
-             FROM starosti INNER JOIN groups ON groups.id = starosti.groupId
+        `SELECT starosti.id, firstName, secondName, thirdName, password, email, university_groups.name as groupName, groupId,  isActivated
+             FROM starosti INNER JOIN university_groups ON university_groups.id = starosti.groupId
              WHERE starosti.groupId = '${authUser.groupId}' LIMIT 1`
       )) as RowDataPacket[];
       const user = users[0] as IStarostaUser;
-      user.role = "starosta";
+      user.role = "староста";
       console.log(user);
       return user;
     } else {
@@ -32,6 +31,7 @@ export default defineEventHandler(async (event) => {
       };
     }
   } catch (error) {
+    console.log(error, "err");
     return createError({
       statusCode: 400,
       message: "invalidToken",

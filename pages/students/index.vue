@@ -3,7 +3,7 @@
   <v-card elevation="4" rounded="0">
     <v-card-text class="pa-0">
       <StudentsEditTable
-        v-if="authStore.currentUser?.role === 'starosta'"
+        v-if="authStore.currentUser?.role === 'староста'"
         :students="students"
         :group-name="authStore.currentUser!.groupName"
         @refresh-data="refresh()"
