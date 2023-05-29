@@ -1,5 +1,6 @@
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
+//import 'vuetify/styles';
 // import * as directives from 'vuetify/directives'
 import defaults from "./defaults";
 import icons from "./icons";

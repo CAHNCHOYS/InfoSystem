@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     //infosystem2023
     // emailPass: "kickmeinback",
     public: {
-      images: "https://info-system.vercel.app/Images",
+      images: "http://localhost:3000/Images",
     },
   },
 });

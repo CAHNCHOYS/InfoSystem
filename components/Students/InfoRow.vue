@@ -8,7 +8,7 @@
       @click.self="isSelected = !isSelected"
       style="cursor: pointer"
     >
-      {{ getFullStudentName }}
+      {{ student.fullName }}
     </td>
   </tr>
 </template>
@@ -37,16 +37,6 @@ watch(
     if (props.cancelSelection) isSelected.value = false;
   }
 );
-
-const getFullStudentName = computed(() => {
-  return (
-    props.student.firstName +
-    " " +
-    props.student.secondName +
-    " " +
-    props.student.thirdName
-  );
-});
 </script>
 
 <style scoped></style>

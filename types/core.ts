@@ -1,32 +1,41 @@
 export type UserRole = "староста" | "студент";
-export type WeekDays = "Понедельник" | "Вторник" | "Среда" | "Четверг" | "Пятница";
+export type WeekDays =
+  | "Понедельник"
+  | "Вторник"
+  | "Среда"
+  | "Четверг"
+  | "Пятница";
 export type WeekType = "Верхняя" | "Нижняя" | "Обе";
 
-export interface IStarostaUser {
+interface IUser {
   id: number;
-  password: string;
-  email: string;
   firstName: string;
-  secondName: string;
-  thirdName: string;
-  groupName: string;
-  groupId: number;
-  isActivated: 0 | 1; //Активирован ли аккаунт
-  role: "староста";
-}
-
-export interface IStudentUser {
+  lastName: string;
+  middleName: string;
   fullName: string;
   groupName: string;
   groupId: number;
+}
+
+export interface IStarostaUser extends IUser {
+  //роль староста
+  password: string;
+  email: string;
+  isActivated: 0 | 1;
+  role: "староста";
+}
+
+export interface IStudentUser extends IUser {
+  //роль студента
   role: "студент";
 }
 
 export interface IStudent {
   id: number;
   firstName: string;
-  secondName: string;
-  thirdName: string;
+  lastName: string;
+  middleName: string;
+  fullName: string;
   dateOfBirth: string;
   phone: string;
   address: string;
@@ -43,4 +52,10 @@ export interface ISchedule {
   weekType: WeekType;
   classOrder: number;
   className: string; //Название пары
+}
+
+export interface IStudentAttendance {
+  id: number;
+  studentId: number;
+  skippedHours: number;
 }

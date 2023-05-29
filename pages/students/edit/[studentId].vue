@@ -27,16 +27,16 @@
             </v-col>
             <v-col sm="6" cols="12">
               <v-text-field
-                v-model="secondName"
-                :error-messages="secondNameErrors"
+                v-model="lastName"
+                :error-messages="lastNameErrors"
                 label="Фамилия студента"
               />
             </v-col>
 
             <v-col sm="6" cols="12">
               <v-text-field
-                v-model="thirdName"
-                :error-messages="thirdNameErrors"
+                v-model="middleName"
+                :error-messages="middleNameErrors"
                 label="Отчество студента"
               />
             </v-col>
@@ -119,6 +119,8 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useAuthStore } from "~/stores/auth";
+import { useGroupStudentsStore } from "~/stores/groupStudents";
 import type { StudentForm } from "~/types/forms";
 
 definePageMeta({
@@ -128,9 +130,14 @@ definePageMeta({
 const { xs } = useDisplay();
 
 const route = useRoute();
+const authStore = useAuthStore();
 
 const { data: studentToEdit, error: fetchStudentError } =
-  await useFetch<StudentForm>("/api/students/single/" + route.params.studentId);
+  await useFetch<StudentForm>(
+    `/api/students/single/${authStore.currentUser!.groupId}/${
+      route.params.studentId
+    }`
+  );
 
 //Валидация формы --------------------------------------
 
@@ -152,10 +159,9 @@ const { handleSubmit, resetForm, isSubmitting } = useForm<StudentForm>({
 
 const { value: firstName, errorMessage: firstNameErrors } =
   useField("firstName");
-const { value: secondName, errorMessage: secondNameErrors } =
-  useField("secondName");
-const { value: thirdName, errorMessage: thirdNameErrors } =
-  useField("thirdName");
+const { value: lastName, errorMessage: lastNameErrors } = useField("lastName");
+const { value: middleName, errorMessage: middleNameErrors } =
+  useField("middleName");
 const { value: phone, errorMessage: phoneErrors } = useField("phone");
 const { value: dateOfBirth, errorMessage: dateOfBirthErrors } =
   useField("dateOfBirth");
@@ -163,10 +169,10 @@ const { value: address, errorMessage: addressErrors } = useField("address");
 
 //----------------------------------------------------
 
-
-
 const isEditSuccess = ref(false);
 const editErrorMessage = ref<string | null>();
+
+const groupStudentsStore = useGroupStudentsStore();
 
 const editSubmit = handleSubmit(async (editPayload: StudentForm) => {
   try {
@@ -177,12 +183,20 @@ const editSubmit = handleSubmit(async (editPayload: StudentForm) => {
         studentId: route.params.studentId,
       },
     });
-
+    groupStudentsStore.updateStudent({
+      ...editPayload,
+      id: +(route.params.studentId as string),
+      fullName:
+        editPayload.firstName +
+        " " +
+        editPayload.lastName +
+        " " +
+        editPayload.middleName,
+    });
     editErrorMessage.value = null;
     isEditSuccess.value = true;
-    setTimeout(() => (isEditSuccess.value = false), 2500);
+    setTimeout(() => (isEditSuccess.value = false), 4000);
   } catch (error) {
-    console.log(error);
     editErrorMessage.value =
       "Ошибка при обновлении информации о студенте, повторите попытку позже!";
   }

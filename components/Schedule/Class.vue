@@ -1,8 +1,8 @@
 <template>
-  <div class="border-sm">
-    <v-row no-gutters align="center" class="px-4 py-1">
+  <div class="border-sm px-4 py-1">
+    <v-row no-gutters align="center">
       <v-col cols="auto" class="pr-4 text-h4">
-        <span class="font-weight-bold">{{ order }}</span>
+        <span class="font-weight-bold"> {{ order }}</span>
       </v-col>
 
       <v-col class="flex-grow-1 text-h6">
@@ -23,6 +23,7 @@
 
       <v-col cols="auto">
         <v-btn
+          v-if="isEditAllowed"
           @click="toggleEdit"
           :icon="
             isUserEditing ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'
@@ -40,11 +41,13 @@
       </v-col>
     </v-row>
     <div class="d-flex align-center px-4" v-if="isUserEditing">
-      <v-checkbox
-        hide-details="auto"
-        v-model="isCurrentWeek"
-        label="Для текущей недели"
-      />
+      <v-checkbox hide-details="auto" v-model="isCurrentWeek" color="black" >
+        <template #label>
+          <span class="text-high-emphasis text-subtitle-1 font-weight-bold" 
+            >Для текущей недели</span
+          >
+        </template>
+      </v-checkbox>
     </div>
   </div>
 </template>
@@ -56,16 +59,17 @@ const props = defineProps<{
   order: number;
   weekType: WeekType;
   scheduleClass: ISchedule | undefined;
+  isEditAllowed: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: "updateSchedule", newSchedule: ISchedule): void;
-  (e: "addSchedule", className: string, week: WeekType): void;
+  (e: "handleScheduleUpdate", newSchedule: ISchedule): void;
+  (e: "handleScheduleAdd", className: string, week: WeekType): void;
 }>();
 
 const isUserEditing = ref(false);
-const newClassName = ref(props.scheduleClass?.className || "Нет пары");
 const isCurrentWeek = ref(true);
+const newClassName = ref(props.scheduleClass?.className || "Нет пары");
 
 watch(
   () => props.scheduleClass,
@@ -81,14 +85,14 @@ const toggleEdit = () => {
 
 const emitAction = () => {
   if (props.scheduleClass) {
-    emit("updateSchedule", {
+    emit("handleScheduleUpdate", {
       ...props.scheduleClass,
       className: newClassName.value,
       weekType: isCurrentWeek.value ? props.weekType : "Обе",
     });
   } else
     emit(
-      "addSchedule",
+      "handleScheduleAdd",
       newClassName.value,
       isCurrentWeek.value ? props.weekType : "Обе"
     );
@@ -96,4 +100,7 @@ const emitAction = () => {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+
+
+</style>

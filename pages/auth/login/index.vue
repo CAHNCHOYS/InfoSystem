@@ -19,17 +19,6 @@
         </p>
       </v-alert>
 
-      <v-alert
-        type="warning"
-        variant="flat"
-        class="mb-5"
-        v-if="route.query.isTokenExpired"
-      >
-        <p class="text-h6">
-          Срок сеанса авторизации истек! Войдите в аккаунт снова
-        </p>
-      </v-alert>
-
       <v-card-actions class="px-0">
         <v-row no-gutters>
           <v-col cols="12" class="mb-4">

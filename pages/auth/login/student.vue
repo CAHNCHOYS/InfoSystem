@@ -8,7 +8,7 @@
       <v-card-title
         class="text-white text-h5 pa-0 mb-10 font-weight-bold text-wrap text-sm-left text-center"
       >
-        Авторизация студента 
+        Авторизация студента
       </v-card-title>
 
       <v-scale-transition>
@@ -41,7 +41,7 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete
-                v-if="!groupsFetchError"
+                v-if="allGroups"
                 v-model="groupId"
                 :items="allGroups"
                 item-title="name"
@@ -52,19 +52,37 @@
                 label="Название группы университета"
                 no-data-text="Группы не найдены"
               />
+              <v-alert type="error" variant="flat" class="mb-5" v-else>
+                <p class="text-h6">
+                  Ошибка при получении групп, авторизация невозможна, повторите
+                  попытку позже!
+                </p>
+              </v-alert>
             </v-col>
             <v-col cols="12">
               <v-text-field
-                v-model="password"
-                :error-messages="passwordErrors"
-                variant="outlined"
-                class="text-white"
-                label="Пароль"
+                v-model="firstName"
+                :error-messages="firstNameErrors"
+                label="Имя"
                 color="white"
-                :type="isPasswordShown ? 'text' : 'password'"
-                prepend-inner-icon="mdi-lock"
-                :append-inner-icon="isPasswordShown ? 'mdi-eye' : 'mdi-eye-off'"
-                @click:append-inner="isPasswordShown = !isPasswordShown"
+                class="text-white"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="lastName"
+                :error-messages="lastNameErrors"
+                class="text-white"
+                label="Фамилия"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="middleName"
+                :error-messages="middleNameErrors"
+                class="text-white"
+                label="Отчество"
               />
             </v-col>
 
@@ -78,15 +96,13 @@
               >
                 Войти
               </v-btn>
-              <p class="text-h6 text-white mt-2">
-                Нет аккаунта ?
-                <nuxt-link
-                  to="/auth/register"
-                  class="font-weight-bold text-yellow"
-                >
-                  Создать
-                </nuxt-link>
-              </p>
+            </v-col>
+            <v-col cols="12">
+              <nuxt-link to="/" class="d-block">
+                <v-btn variant="flat" block color="indigo-darken-4">
+                  На главную страницу
+                </v-btn></nuxt-link
+              >
             </v-col>
           </v-row>
         </v-form>
@@ -111,8 +127,9 @@
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/auth";
 import { NuxtError } from "nuxt/app";
-import type { LoginForm } from "~/types/forms";
-import type { IStarostaUser, IStudentGroup } from "~/types/core";
+import type { StudentLoginForm } from "~/types/forms";
+import type { IStudentGroup, IStudentUser } from "~/types/core";
+import { useGroupStudentsStore } from "~/stores/groupStudents";
 
 definePageMeta({
   layout: "login",
@@ -121,57 +138,60 @@ definePageMeta({
 const config = useRuntimeConfig();
 
 //-----------Валидация формы -------------------------------------------
-const { loginSchema } = useFormSchemas();
+const { studentLoginSchema } = useFormSchemas();
 
-const { handleSubmit, resetForm, isSubmitting } = useForm<LoginForm>({
-  validationSchema: loginSchema,
+const { handleSubmit, isSubmitting } = useForm<StudentLoginForm>({
+  validationSchema: studentLoginSchema,
 });
 
 const { value: groupId, errorMessage: groupIdErrors } = useField("groupId");
-const { value: password, errorMessage: passwordErrors } = useField("password");
+const { value: firstName, errorMessage: firstNameErrors } =
+  useField("firstName");
+const { value: lastName, errorMessage: lastNameErrors } = useField("lastName");
+const { value: middleName, errorMessage: middleNameErrors } =
+  useField("middleName");
+
 //-----------------------------------------------------------------------
 
 //Авторизация------------------------------------------------------------
-const allGroups = ref<IStudentGroup[]>([]);
-const { data, error: groupsFetchError } = await useFetch<IStudentGroup[]>(
-  "/api/groups/all"
-);
-if (data.value) {
-  allGroups.value = data.value;
-}
+const { data: allGroups, error: groupsFetchError } = await useFetch<
+  IStudentGroup[]
+>("/api/groups");
 
-const isPasswordShown = ref(false);
 const loginErrorMessage = ref<string | null>(null);
 const isLoginSuccess = ref(false);
 
+const groupStudentsStore = useGroupStudentsStore();
 const authStore = useAuthStore();
+const route = useRoute();
 
-const handleLogin = handleSubmit(async (loginPayload: LoginForm) => {
+const handleLogin = handleSubmit(async (loginPayload: StudentLoginForm) => {
   try {
-    const starosta = await $fetch<IStarostaUser>("/api/auth/login/starosta", {
-      method: "POST",
+    const student = await $fetch<IStudentUser>("/api/auth/login/student", {
+      method: "post",
       body: loginPayload,
     });
-
-    isLoginSuccess.value = true;
     loginErrorMessage.value = null;
-    authStore.setUser(starosta);
+    isLoginSuccess.value = true;
+    authStore.setUser(student);
+    await groupStudentsStore.getAllGroupStudents(student.groupId);
     setTimeout(async () => {
-      await navigateTo("/");
+      if (route.query.redirectedFrom) {
+        await navigateTo(route.query.redirectedFrom as string);
+      } else await navigateTo("/");
     }, 2000);
   } catch (error) {
     const err = error as NuxtError;
     if (err.statusCode === 404) {
       loginErrorMessage.value =
-        "Староста выбранной группы на зарегистрирован! Создайте аккаунт или выберете другую группу";
+        "Студент с такими данными не найден в группе, проверьте корректность данных!";
     } else if (err.statusCode === 400) {
       loginErrorMessage.value =
-        "Неверный пароль от аккаунта,  повторите попытку!";
+        "Студент с такими данными является старостой, войдите как староста или введите другие данные!";
     } else {
       loginErrorMessage.value =
-        "Ошибка на сервере, возможно, база данных недоступна, повторите попытку позже!";
+        "Ошибка при авторизации повторите попытку позже!";
     }
-    //resetForm();
   }
 });
 

@@ -1,14 +1,13 @@
 <template>
   <div>
-    <h2>Главная страница</h2>
-    <p class="text-h1">
-   
-    </p>
+    <h2>
+      {{ message }}
+    </h2>
   </div>
 </template>
 
 <script setup lang="ts">
-
+const message = ref("Мое сообщение");
 </script>
 
 <style scoped></style>

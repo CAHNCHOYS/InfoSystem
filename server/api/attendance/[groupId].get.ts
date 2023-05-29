@@ -2,16 +2,14 @@ import { dbPool } from "~/server/plugins/database";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { studentId } = event.context.params!;
-    console.log(studentId);
+    const { groupId } = event.context.params!;
+    console.log(groupId);
 
-    await dbPool.query(
-      `DELETE FROM group_students WHERE group_students.id = ${studentId}`
+    const [attendance] = await dbPool.query(
+      `SELECT id, skippedHours, studentId FROM student_attendance WHERE groupId = ${groupId}`
     );
 
-    return {
-      isDeleted: true,
-    };
+    return attendance;
   } catch (error) {
     throw createError({
       statusCode: 500,

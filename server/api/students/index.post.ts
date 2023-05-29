@@ -1,24 +1,29 @@
+import  type { ResultSetHeader } from "mysql2";
 import { dbPool } from "~/server/plugins/database";
 
 export default defineEventHandler(async (event) => {
   try {
     const {
       firstName,
-      secondName,
-      thirdName,
+      lastName,
+      middleName,
       phone,
       dateOfBirth,
       address,
       groupId,
     } = await readBody(event);
 
-    const [rows] =
-      await dbPool.query(`INSERT INTO group_students (firstName, secondName, thirdName, phone, dateOfBirth, address, groupId) 
-    VALUES ('${firstName}', '${secondName}', '${thirdName}', '${phone}', '${dateOfBirth}', '${address}', ${groupId})`);
+    const [results] =
+      await dbPool.query(`INSERT INTO group_students (firstName, lastName, middleName, phone, dateOfBirth, address, groupId) 
+    VALUES ('${firstName}', '${lastName}', '${middleName}', '${phone}', '${dateOfBirth}', '${address}', ${groupId})`);
+
+
 
     return {
-      isAdded: true,
+      id: (results as ResultSetHeader).insertId,
     };
+
+
   } catch (error) {
     throw createError({
       statusCode: 500,

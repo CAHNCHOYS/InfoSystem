@@ -1,7 +1,7 @@
 <template>
   <div class="pt-4">
-    <v-card class="px-7 pt-5 pb-7 mx-sm-0 mx-n3" elevation="8"  rounded="lg">
-      <v-card-title class="text-md-h4 text-h5 text-wrap mb-7  pa-0 py-2"
+    <v-card class="px-7 pt-7 pb-9 mx-sm-0 mx-n3" elevation="8" rounded="lg">
+      <v-card-title class="text-md-h4 text-h5 text-wrap mb-7 pa-0 py-2"
         >Добавление студента в группу</v-card-title
       >
       <v-slide-x-transition>
@@ -25,16 +25,16 @@
             </v-col>
             <v-col sm="6" cols="12">
               <v-text-field
-                v-model="secondName"
-                :error-messages="secondNameErrors"
+                v-model="lastName"
+                :error-messages="lastNameErrors"
                 label="Фамилия студента"
               />
             </v-col>
 
             <v-col sm="6" cols="12">
               <v-text-field
-                v-model="thirdName"
-                :error-messages="thirdNameErrors"
+                v-model="middleName"
+                :error-messages="middleNameErrors"
                 label="Отчество студента"
               />
             </v-col>
@@ -115,6 +115,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/auth";
+import { useGroupStudentsStore } from "~/stores/groupStudents";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import type { StudentForm } from "~/types/forms";
 
@@ -134,10 +135,9 @@ const { handleSubmit, resetForm, isSubmitting } = useForm<StudentForm>({
 
 const { value: firstName, errorMessage: firstNameErrors } =
   useField("firstName");
-const { value: secondName, errorMessage: secondNameErrors } =
-  useField("secondName");
-const { value: thirdName, errorMessage: thirdNameErrors } =
-  useField("thirdName");
+const { value: lastName, errorMessage: lastNameErrors } = useField("lastName");
+const { value: middleName, errorMessage: middleNameErrors } =
+  useField("middleName");
 const { value: phone, errorMessage: phoneErrors } = useField("phone");
 const { value: dateOfBirth, errorMessage: dateOfBirthErrors } =
   useField("dateOfBirth");
@@ -149,17 +149,28 @@ const { value: address, errorMessage: addressErrors } = useField("address");
 const isAddSuccess = ref(false);
 const addErrorMessage = ref<string | null>(null);
 const authStore = useAuthStore();
+const groupStudentsStore = useGroupStudentsStore();
 
 const addSubmit = handleSubmit(async (addStudentPayload: StudentForm) => {
   try {
-    await $fetch("/api/students", {
+    const { id } = await $fetch("/api/students", {
       method: "POST",
       body: { ...addStudentPayload, groupId: authStore.currentUser?.groupId },
       credentials: "include",
     });
     addErrorMessage.value = null;
     isAddSuccess.value = true;
-    setTimeout(() => (isAddSuccess.value = false), 3200);
+    groupStudentsStore.addStudent({
+      ...addStudentPayload,
+      id,
+      fullName:
+        addStudentPayload.firstName +
+        " " +
+        addStudentPayload.lastName +
+        " " +
+        addStudentPayload.middleName,
+    });
+    setTimeout(() => (isAddSuccess.value = false), 4000);
     resetForm();
   } catch (error) {
     addErrorMessage.value =

@@ -7,6 +7,31 @@ body {
   min-width: 320px;
 }
 
-a{
+
+a {
   text-decoration: none;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+// .v-input input {
+
+//   font-size: 1.2rem !important;
+//   height: auto !important;
+//   @media (max-width: 600px) {
+//     font-size: 1.1rem !important;
+//   }
+// }
+
+// .v-field-label {
+//   font-size: 0.9rem !important;
+//   line-height: 22/18;
+//   @media (max-width: 600px) {
+//     font-size: 0.85rem !important;
+//   }
+// }

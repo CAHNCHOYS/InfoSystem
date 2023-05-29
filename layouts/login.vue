@@ -1,10 +1,7 @@
 <template>
   <v-layout>
     <v-main>
-        
-      <slot > </slot>
-
- 
+      <slot> </slot>
     </v-main>
   </v-layout>
 </template>

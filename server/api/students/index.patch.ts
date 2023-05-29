@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
     const {
       studentId,
       firstName,
-      secondName,
-      thirdName,
+      lastName,
+      middleName,
       dateOfBirth,
       address,
       phone,
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     console.log(studentId);
 
      await dbPool.query(
-      `UPDATE group_students SET firstName = '${firstName}', secondName = '${secondName}', thirdName = '${thirdName}',
+      `UPDATE group_students SET firstName = '${firstName}', lastName = '${lastName}', middleName = '${middleName}',
        dateOfBirth = '${dateOfBirth}', address = '${address}', phone = '${phone}'
        WHERE group_students.id = ${studentId}`
     );

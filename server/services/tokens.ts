@@ -6,9 +6,9 @@ const config = useRuntimeConfig();
 export const createAccessToken = (
   groupId: number,
   role: UserRole,
-  fullName?: string
+  studentId?: number
 ) => {
-  const token = jwt.sign({ groupId, role, fullName }, config.JWT_ACCESS_KEY, {
+  const token = jwt.sign({ groupId, role, studentId }, config.JWT_ACCESS_KEY, {
     expiresIn: "3h",
   });
 

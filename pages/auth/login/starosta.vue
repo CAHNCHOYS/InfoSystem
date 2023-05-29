@@ -41,7 +41,7 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete
-                v-if="allGroups.length"
+                v-if="allGroups?.length"
                 v-model="groupId"
                 :items="allGroups"
                 item-title="name"
@@ -49,7 +49,7 @@
                 :error-messages="groupIdErrors"
                 prepend-inner-icon="mdi-account-group"
                 class="text-white"
-                label="Название группы университета"
+                label="Группа университета"
                 no-data-text="Группы не найдены"
               />
               <v-alert type="error" variant="flat" v-else>
@@ -116,8 +116,9 @@
 </template>
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/auth";
-import { NuxtError } from "nuxt/app";
-import type { LoginForm } from "~/types/forms";
+import { useGroupStudentsStore } from "~/stores/groupStudents";
+import type { NuxtError } from "nuxt/app";
+import type { StarostaLoginForm } from "~/types/forms";
 import type { IStarostaUser, IStudentGroup } from "~/types/core";
 
 definePageMeta({
@@ -127,10 +128,10 @@ definePageMeta({
 const config = useRuntimeConfig();
 
 //-----------Валидация формы -------------------------------------------
-const { loginSchema } = useFormSchemas();
+const { starostaLoginSchema } = useFormSchemas();
 
-const { handleSubmit, resetForm, isSubmitting } = useForm<LoginForm>({
-  validationSchema: loginSchema,
+const { handleSubmit, resetForm, isSubmitting } = useForm<StarostaLoginForm>({
+  validationSchema: starostaLoginSchema,
 });
 
 const { value: groupId, errorMessage: groupIdErrors } = useField("groupId");
@@ -138,22 +139,19 @@ const { value: password, errorMessage: passwordErrors } = useField("password");
 //-----------------------------------------------------------------------
 
 //Авторизация------------------------------------------------------------
-const allGroups = ref<IStudentGroup[]>([]);
-const { data, error: groupsFetchError } = await useFetch<IStudentGroup[]>(
-  "/api/groups"
-);
-if (data.value) {
-  allGroups.value = data.value;
-}
+const { data: allGroups, error: groupsFetchError } = await useFetch<
+  IStudentGroup[]
+>("/api/groups");
 
 const isPasswordShown = ref(false);
 const loginErrorMessage = ref<string | null>(null);
 const isLoginSuccess = ref(false);
 
 const authStore = useAuthStore();
+const groupStudentsStore = useGroupStudentsStore();
 const route = useRoute();
 
-const handleLogin = handleSubmit(async (loginPayload: LoginForm) => {
+const handleLogin = handleSubmit(async (loginPayload: StarostaLoginForm) => {
   try {
     const starosta = await $fetch<IStarostaUser>("/api/auth/login/starosta", {
       method: "POST",
@@ -162,6 +160,7 @@ const handleLogin = handleSubmit(async (loginPayload: LoginForm) => {
     isLoginSuccess.value = true;
     loginErrorMessage.value = null;
     authStore.setUser(starosta);
+    await groupStudentsStore.getAllGroupStudents(starosta.groupId);
     setTimeout(async () => {
       if (route.query.redirectedFrom) {
         await navigateTo(route.query.redirectedFrom as string);

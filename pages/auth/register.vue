@@ -54,6 +54,7 @@
                 prepend-inner-icon="mdi-lock"
                 label="Пароль"
                 color="white"
+                type="password"
                 hint="Пароль для входа на сайт"
               />
             </v-col>
@@ -68,8 +69,8 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
-                v-model="secondName"
-                :error-messages="secondNameErrors"
+                v-model="lastName"
+                :error-messages="lastNameErrors"
                 class="text-white"
                 label="Фамилия"
               >
@@ -77,8 +78,8 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
-                v-model="thirdName"
-                :error-messages="thirdNameErrors"
+                v-model="middleName"
+                :error-messages="middleNameErrors"
                 class="text-white"
                 label="Отчество"
               />
@@ -93,7 +94,7 @@
                 :error-messages="groupIdErrors"
                 prepend-inner-icon="mdi-account-group"
                 class="text-white"
-                label="Название группы университета"
+                label="Группа"
                 no-data-text="Группы не найдены"
               />
               <v-alert variant="flat" type="error" v-else>
@@ -161,7 +162,7 @@
 
 <script setup lang="ts">
 import { NuxtError } from "nuxt/app";
-import type { RegisterForm } from "~/types/forms";
+import type { StarostaRegisterForm } from "~/types/forms";
 import type { IStudentGroup } from "~/types/core";
 definePageMeta({
   layout: "login",
@@ -172,16 +173,16 @@ const config = useRuntimeConfig();
 //Валидация формы----------------------------------------------------------
 const { registerSchema } = useFormSchemas();
 
-const { handleSubmit, isSubmitting } = useForm<RegisterForm>({
+const { handleSubmit, isSubmitting } = useForm<StarostaRegisterForm>({
   validationSchema: registerSchema,
 });
 
 const { value: firstName, errorMessage: firstNameErrors } =
   useField("firstName");
-const { value: secondName, errorMessage: secondNameErrors } =
-  useField("secondName");
-const { value: thirdName, errorMessage: thirdNameErrors } =
-  useField("thirdName");
+const { value: lastName, errorMessage: lastNameErrors } =
+  useField("lastName");
+const { value: middleName, errorMessage: middleNameErrors } =
+  useField("middleName");
 const { value: email, errorMessage: emailErrors } = useField("email");
 const { value: password, errorMessage: passwordErrors } = useField("password");
 const { value: groupId, errorMessage: groupIdErrors } = useField("groupId");
@@ -195,7 +196,7 @@ const { data: allGroups, error: groupsFetchError } = await useFetch<
 const registerErrorMessage = ref<string | null>(null);
 const isRegisterSuccess = ref(false);
 
-const registerSubmit = handleSubmit(async (registerPayload: RegisterForm) => {
+const registerSubmit = handleSubmit(async (registerPayload: StarostaRegisterForm) => {
   console.log(registerPayload);
   try {
     await $fetch("/api/auth/register", {

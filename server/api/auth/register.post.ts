@@ -4,10 +4,8 @@ import type { RowDataPacket } from "mysql2";
 import { sendEmail } from "~/server/services/nodemailer";
 
 export default defineEventHandler(async (event) => {
-  const { firstName, secondName, thirdName, email, groupId, password } =
+  const { firstName, lastName, middleName, email, groupId, password } =
     await readBody(event);
-
-  console.log(groupId);
   try {
     const [emails] = (await dbPool.query(
       `SELECT id FROM starosti WHERE email = '${email}' LIMIT 1`
@@ -23,11 +21,13 @@ export default defineEventHandler(async (event) => {
     const salt = bcrypt.genSaltSync(5);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    console.log(hashedPassword, "password");
 
-    const [] = await dbPool.query(
-      `INSERT INTO starosti (firstName, secondName, thirdName, email, password, groupId)
-           VALUES ('${firstName}', '${secondName}', '${thirdName}', '${email}', '${hashedPassword}', '${groupId}')`
+    await dbPool.query(`INSERT INTO group_students (firstName, lastName, middleName, groupId) 
+    VALUES ('${firstName}', '${lastName}', '${middleName}',  ${groupId})`);
+
+    await dbPool.query(
+      `INSERT INTO starosti (firstName, lastName, middleName, email, password, groupId)
+           VALUES ('${firstName}', '${lastName}', '${middleName}', '${email}', '${hashedPassword}', '${groupId}')`
     );
 
     //   await sendEmail(firstName, email);

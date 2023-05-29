@@ -1,8 +1,11 @@
 <template>
-  <h3 class="text-sm-h4 text-h5 mb-7">
-    Расписание группы {{ authStore.currentUser?.groupName }} на текущий семестр
-  </h3>
-  <v-card color="white" elevation="4" class="pa-md-5 pa-2 mx-sm-0 mx-n3">
+  <h3 class="text-sm-h4 text-h5 mb-7">Расписание группы на текущий семестр</h3>
+  <v-card
+    color="white"
+    elevation="4"
+    class="pa-md-5 pa-2 mx-sm-0 mx-n3"
+    v-if="!scheduleFetchError"
+  >
     <v-card-title
       class="text-wrap text-h6 d-flex justify-space-between align-center"
     >
@@ -38,7 +41,7 @@
       </div>
     </v-card-title>
 
-    <v-card-actions class="d-block" v-if="!scheduleFetchError">
+    <v-card-text>
       <v-row class="mb-2">
         <v-col
           v-for="{ icon, day, isLoading, error } in scheduleCols"
@@ -49,54 +52,50 @@
           <v-sheet height="65" color="blue-grey" class="pa-4">
             <h3 class="text-h6">{{ day }} <v-icon :icon="icon" /></h3>
           </v-sheet>
-          <v-sheet border="sm" v-if="!isLoading && !error">
+          <div v-if="!isLoading && !error">
             <ScheduleClass
               v-for="n in 6"
               :schedule-class="findClassByDayAndOrder(day, n)"
               :week-type="currentWeek"
               :order="n"
-              @update-schedule="updateSchedule"
-              @add-schedule="
+              :is-edit-allowed="authStore.currentUser?.role === 'староста'"
+              @handle-schedule-update="updateSchedule"
+              @handle-schedule-add="
                 (className, weekType) =>
-                  addSchedule(className, day, n, weekType)
+                  addSchedule(className, weekType, day, n)
               "
               :key="n"
-            >
-            </ScheduleClass>
-          </v-sheet>
-          <v-sheet
-            class="border-sm d-flex justify-center pa-5"
-            v-else-if="!error"
-          >
+            />
+          </div>
+          <div class="border-sm d-flex justify-center pa-5" v-else-if="!error">
             <v-progress-circular indeterminate color="indigo" size="64" />
-          </v-sheet>
-          <v-sheet v-else>
-            <v-alert rounded="0" type="error">
-              <p class="text-h6">{{ error }}</p>
-            </v-alert>
-          </v-sheet>
+          </div>
 
+          <v-alert rounded="0" type="error" v-else>
+            <p class="text-h6">{{ error }}</p>
+          </v-alert>
         </v-col>
       </v-row>
-      <div>
+      <div v-if="authStore.currentUser?.role === 'староста'">
         <v-btn
           @click="deleteAllSchedule"
           variant="flat"
           color="error"
-          prepend-icon="mdi-trash-can"
+          class="px-5"
+          append-icon="mdi-trash-can"
         >
           Очистить расписание
         </v-btn>
       </div>
-    </v-card-actions>
-
-    <v-alert type="error" v-else>
-      <p class="text-h6">
-        Ошибка при получении расписания, повторите попытку позже или обновите
-        страницу
-      </p>
-    </v-alert>
+    </v-card-text>
   </v-card>
+
+  <v-alert type="error" v-else>
+    <p class="text-h6">
+      При загрузке расписания произошла ошибка, возможно база данных недоступна,
+      повторите попытку позже или обновите страницу
+    </p>
+  </v-alert>
 </template>
 
 <script setup lang="ts">
@@ -174,11 +173,11 @@ const activateListColumns = () => {
   isListActive.value = true;
 };
 
-const currentWeek = ref<WeekType>("Верхняя");
-
 //--------------------------------------------------------------------
 
 //Работа с расписанием ----------------------------------------------
+
+const currentWeek = ref<WeekType>("Верхняя");
 
 const findClassByDayAndOrder = computed(() => {
   return function (day: WeekDays, order: number) {
@@ -193,12 +192,11 @@ const findClassByDayAndOrder = computed(() => {
 });
 
 const updateSchedule = async (newSchedule: ISchedule) => {
-  const updateCol = scheduleCols.value.find(
+  const currentCol = scheduleCols.value.find(
     (col) => col.day === newSchedule.day
   )!;
   try {
-    updateCol.isLoading = true;
-
+    currentCol.isLoading = true;
     await $fetch("/api/schedule", {
       method: "PATCH",
       body: {
@@ -208,25 +206,23 @@ const updateSchedule = async (newSchedule: ISchedule) => {
     });
     await refreshSchedule();
   } catch (error) {
-    updateCol.error =
+    currentCol.error =
       "Ошикба при обновлении расписания, попробуйте обновить страницу или повторить попытку позже!";
+    setTimeout(() => (currentCol.error = null), 2500);
   } finally {
-    updateCol.isLoading = false;
+    currentCol.isLoading = false;
   }
 };
 
 const addSchedule = async (
   className: string,
+  weekType: WeekType,
   day: WeekDays,
-  order: number,
-  weekType: WeekType
+  order: number
 ) => {
-  const addCol = scheduleCols.value.find((col) => col.day === day)!;
+  const currentCol = scheduleCols.value.find((col) => col.day === day)!;
   try {
-    addCol.isLoading = true;
-    await new Promise((res) => {
-      setTimeout(() => res("done"), 3500);
-    });
+    currentCol.isLoading = true;
     await $fetch("/api/schedule", {
       method: "POST",
       body: {
@@ -239,10 +235,11 @@ const addSchedule = async (
     });
     await refreshSchedule();
   } catch (error) {
-    addCol.error =
+    currentCol.error =
       "Ошикба при добавлении расписания, попробуйте обновить страницу или повторить попытку позже!";
+    setTimeout(() => (currentCol.error = null), 2500);
   } finally {
-    addCol.isLoading = false;
+    currentCol.isLoading = false;
   }
 };
 
@@ -257,7 +254,7 @@ const deleteAllSchedule = async () => {
     await $fetch("/api/schedule/" + authStore.currentUser?.groupId, {
       method: "DELETE",
     });
-    refreshSchedule();
+    await refreshSchedule();
   } catch (error) {
     console.log(error);
   }

@@ -1,21 +1,26 @@
-type PersonName = {
-  firstName: string;
-  secondName: string;
-  thirdName: string;
+type NameForm = {
+  firstName: string; //имя
+  lastName: string; //фамилия
+  middleName: string; //отчество
 };
 
-export type LoginForm = {
+export type StarostaLoginForm = {
   groupId: number;
   password: string;
 };
 
-export type RegisterForm = LoginForm &
-  PersonName & {
+export type StudentLoginForm = NameForm & {
+  groupId: number;
+}
+
+export type StarostaRegisterForm = StarostaLoginForm &
+  NameForm & {
     email: string;
   };
 
-export type StudentForm = PersonName & {
+export type StudentForm = NameForm & {
   address: string;
   phone: string;
   dateOfBirth: string;
 };
+

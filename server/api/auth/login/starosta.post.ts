@@ -3,15 +3,16 @@ import { RowDataPacket } from "mysql2";
 import { dbPool } from "~/server/plugins/database";
 import { createAccessToken } from "~/server/services/tokens";
 import type { IStarostaUser } from "~/types/core";
-import type{ LoginForm } from "~/types/forms";
+import type { StarostaLoginForm } from "~/types/forms";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { groupId, password } = await readBody<LoginForm>(event);
+    const { groupId, password } = await readBody<StarostaLoginForm>(event);
     const [users] = (await dbPool.query(
-      `SELECT starosti.id, firstName, secondName, thirdName, password, email, university_groups.name as groupName, groupId, isActivated
+      `SELECT starosti.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName, password, 
+       email, university_groups.name as groupName, groupId, isActivated
        FROM starosti INNER JOIN university_groups ON university_groups.id = starosti.groupId
-       WHERE starosti.groupId = '${groupId}' LIMIT 1`
+       WHERE starosti.groupId = '${groupId}'`
     )) as RowDataPacket[];
     if (users.length <= 0) {
       return createError({

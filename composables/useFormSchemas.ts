@@ -5,15 +5,15 @@ export const useFormSchemas = () => {
     firstName: string()
       .required("Поле обязательное для ввода!")
       .min(2, "Слишком короткое имя")
-      .max(40, "Слишком длинное имя"),
-    secondName: string()
+      .max(25, "Слишком длинное имя"),
+    lastName: string()
       .required("Поле обязательное для ввода!")
       .min(2, "Слишком короткая фамилия")
-      .max(40, "Слишком длинная фамилия"),
-    thirdName: string()
+      .max(25, "Слишком длинная фамилия"),
+    middleName: string()
       .required("Поле обязательное для ввода!")
       .min(5, "Слишком короткое  Отчество!")
-      .max(40, "Слишком длинное отчество"),
+      .max(25, "Слишком длинное отчество"),
   });
 
   const registerSchema = checkNameSchema.shape({
@@ -39,7 +39,7 @@ export const useFormSchemas = () => {
       .typeError("Введите группу!"),
   });
 
-  const loginSchema = object({
+  const starostaLoginSchema = object({
     groupId: number()
       .required("Поле обязательное для ввода!")
       .typeError("Введите группу!"),
@@ -47,6 +47,12 @@ export const useFormSchemas = () => {
       .required("Поле обязательное для ввода")
       .min(4, "Слишком короткий пароль")
       .max(40, "Слишком много символов"),
+  });
+
+  const studentLoginSchema = checkNameSchema.shape({
+    groupId: number()
+      .required("Поле обязательное для ввода!")
+      .typeError("Введите группу!"),
   });
 
   const studentSchema = checkNameSchema.shape({
@@ -66,8 +72,21 @@ export const useFormSchemas = () => {
         "Максимально доступная  дата для добавления: 30.12.2010"
       )
       .typeError("Выберете дату!"),
-    language: string().required("Выберете иностранный язык!").default("Английский"),
   });
 
-  return { registerSchema, loginSchema, studentSchema };
+  const updateStarostaInfoSchema = checkNameSchema.shape({
+    email: string()
+      .required("Поле обязательное для ввода")
+      .min(4, "Слишком короткий email")
+      .email("Введите правильный email")
+      .max(50, "Слишком длинный email"),
+  });
+
+  return {
+    registerSchema,
+    starostaLoginSchema,
+    studentSchema,
+    updateStarostaInfoSchema,
+    studentLoginSchema,
+  };
 };
