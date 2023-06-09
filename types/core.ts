@@ -59,3 +59,12 @@ export interface IStudentAttendance {
   studentId: number;
   skippedHours: number;
 }
+
+export interface IGroupExam {
+  id: number;
+  className: string;
+  teacherName: string;
+  examType: "Консультация" | "Экзамен";
+  date: string;
+  time: string;
+}

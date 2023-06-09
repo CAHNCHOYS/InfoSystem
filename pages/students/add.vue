@@ -120,7 +120,7 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 import type { StudentForm } from "~/types/forms";
 
 definePageMeta({
-  middleware: "check-auth",
+  middleware: ["check-auth", "check-starosta"],
 });
 
 const { xs } = useDisplay();
@@ -164,9 +164,9 @@ const addSubmit = handleSubmit(async (addStudentPayload: StudentForm) => {
       ...addStudentPayload,
       id,
       fullName:
-        addStudentPayload.firstName +
-        " " +
         addStudentPayload.lastName +
+        " " +
+        addStudentPayload.firstName +
         " " +
         addStudentPayload.middleName,
     });

@@ -12,7 +12,7 @@ export default defineNuxtPlugin(async (nuxt) => {
     await groupStudentsStore.getAllGroupStudents(authStore.currentUser.groupId);
   }
 
-  console.log(groupStudentsStore.students, "students");
+  //  console.log(groupStudentsStore.students, "students");
 
   // console.log(authStore.isUserLoggedIn, "checkLoginAfter");
 });

@@ -5,52 +5,81 @@
     color="#17213C"
     class="d-flex flex-column"
   >
-    <v-container class="pa-0 py-2">
-      <v-row align="center" class="text-white" no-gutters>
-        <v-col class="flex-grow-1 pr-1 d-flex">
-          <div class="pr-1">
-            <v-img
-              :src="config.public.images + '/Header/students.png'"
-              width="30"
-              height="30"
-              cover
-              class="rounded-circle"
-            />
-          </div>
-          <div class="flex-grow-1">
-            <span class="text-subtitle-1">
-              Информационно справочная система "Старосты и подгруппы"
-            </span>
-          </div>
-        </v-col>
-        <v-col sm="auto" cols="12" class="text-sm-left text-center">
-          Автор:
-          <nuxt-link to="https://github.com/CAHNCHOYS" target="_blank">
-            <v-btn variant="plain" class="text-white" icon="mdi-github" />
-          </nuxt-link>
-
-          <nuxt-link to="https://github.com/CAHNCHOYS" target="_blank">
-            <v-btn variant="text" class="text-white rounded-circle">
+    <div class="py-2">
+      <v-row justify="center">
+        <v-col cols="auto">
+          <nuxt-link class="d-flex align-center" to="/">
+            <v-img class="pr-2">
               <v-img
-                :src="config.public.images + '/Footer/Telega.png'"
-                width="32"
-                height="32"
+                :src="config.public.images + '/Header/students.png'"
+                width="30"
+                height="30"
+                cover
+                class="rounded-circle"
               />
-            </v-btn>
+            </v-img>
+
+            <div class="text-white">Главная</div>
+          </nuxt-link>
+        </v-col>
+
+        <v-col v-for="{ link, text } in menuItems" cols="auto" :key="link">
+          <nuxt-link :to="link" class="text-white footer-link text-subtitle-1">
+            {{ text }}
           </nuxt-link>
         </v-col>
       </v-row>
-    </v-container>
+    </div>
 
-    <div class="text-center text-subtitle-1 text-white">
+
+    <div class="text-center text-subtitle-2 text-white pb-2 d-sm-block d-none">
+      Разработчик:  Студент гр. ПИ-19Г
+      <span class="font-weight-bold">Седых Алексей</span>
+    </div>
+
+    <div class="text-center text-subtitle-2 text-white">
       2023 - <span class="font-weight-bold">ДонНТУ</span>
+
+      <nuxt-link
+        class="text-white"
+        to="https://github.com/CAHNCHOYS/InfoSystem"
+        target="_blank"
+      >
+        <v-icon class="pl-2" icon="mdi-github"
+      /></nuxt-link>
     </div>
   </v-footer>
 </template>
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
-const icons = ref(["mdi-github"]);
+
+const menuItems = ref([
+  {
+    text: "Студенты",
+    link: "/students",
+  },
+  {
+    text: "Расписание",
+    link: "/schedule",
+  },
+  {
+    text: "Посещаемость",
+    link: "/attendance",
+  },
+  {
+    text: "Расписание сессии",
+    link: "/exams",
+  },
+]);
 </script>
 
-<style scoped></style>
+<style scoped>
+.footer-link {
+  transition: all 0.5s ease 0s;
+}
+
+.footer-link:hover {
+  color: coral !important;
+}
+</style>

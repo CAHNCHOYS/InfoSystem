@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { groupId, password } = await readBody<StarostaLoginForm>(event);
     const [users] = (await dbPool.query(
-      `SELECT starosti.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName, password, 
+      `SELECT starosti.id, firstName, lastName, middleName, CONCAT(lastName, " ", firstName, " ", middleName) AS fullName, password, 
        email, university_groups.name as groupName, groupId, isActivated
        FROM starosti INNER JOIN university_groups ON university_groups.id = starosti.groupId
        WHERE starosti.groupId = '${groupId}'`
@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
 
     setCookie(event, "token", accessToken, {
       maxAge: 24 * 60 * 60,
+      
     });
 
     return user;

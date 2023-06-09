@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
     await dbPool.query(`INSERT INTO group_students (firstName, lastName, middleName, groupId) 
     VALUES ('${firstName}', '${lastName}', '${middleName}',  ${groupId})`);
 
+    
     await dbPool.query(
       `INSERT INTO starosti (firstName, lastName, middleName, email, password, groupId)
            VALUES ('${firstName}', '${lastName}', '${middleName}', '${email}', '${hashedPassword}', '${groupId}')`

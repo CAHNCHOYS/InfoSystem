@@ -24,3 +24,10 @@ export type StudentForm = NameForm & {
   dateOfBirth: string;
 };
 
+export type SessionExamForm = {
+  className: string;
+  type: string;
+  time: string;
+  date: string;
+
+}

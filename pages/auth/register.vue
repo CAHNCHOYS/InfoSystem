@@ -53,8 +53,10 @@
                 class="text-white"
                 prepend-inner-icon="mdi-lock"
                 label="Пароль"
+                :append-inner-icon="isPasswordSeen ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="isPasswordSeen = !isPasswordSeen"
+                :type="isPasswordSeen ? 'text' : 'password'"
                 color="white"
-                type="password"
                 hint="Пароль для входа на сайт"
               />
             </v-col>
@@ -179,8 +181,7 @@ const { handleSubmit, isSubmitting } = useForm<StarostaRegisterForm>({
 
 const { value: firstName, errorMessage: firstNameErrors } =
   useField("firstName");
-const { value: lastName, errorMessage: lastNameErrors } =
-  useField("lastName");
+const { value: lastName, errorMessage: lastNameErrors } = useField("lastName");
 const { value: middleName, errorMessage: middleNameErrors } =
   useField("middleName");
 const { value: email, errorMessage: emailErrors } = useField("email");
@@ -196,26 +197,30 @@ const { data: allGroups, error: groupsFetchError } = await useFetch<
 const registerErrorMessage = ref<string | null>(null);
 const isRegisterSuccess = ref(false);
 
-const registerSubmit = handleSubmit(async (registerPayload: StarostaRegisterForm) => {
-  console.log(registerPayload);
-  try {
-    await $fetch("/api/auth/register", {
-      method: "POST",
-      body: registerPayload,
-    });
+const isPasswordSeen = ref(false);
 
-    isRegisterSuccess.value = true;
-    registerErrorMessage.value = null;
-  } catch (error) {
-    if ((error as NuxtError).statusCode === 406) {
-      registerErrorMessage.value =
-        "Староста с таким email уже был зарегистрирован, войдите в аккаунт!";
-    } else {
-      registerErrorMessage.value =
-        "Ошибка на при регистрации, возможно, староста выбранной группы уже зарегистрирован, или база данных недоступна!";
+const registerSubmit = handleSubmit(
+  async (registerPayload: StarostaRegisterForm) => {
+    console.log(registerPayload);
+    try {
+      await $fetch("/api/auth/register", {
+        method: "POST",
+        body: registerPayload,
+      });
+
+      isRegisterSuccess.value = true;
+      registerErrorMessage.value = null;
+    } catch (error) {
+      if ((error as NuxtError).statusCode === 406) {
+        registerErrorMessage.value =
+          "Староста с таким email уже был зарегистрирован, войдите в аккаунт!";
+      } else {
+        registerErrorMessage.value =
+          "Ошибка на при регистрации, возможно, староста выбранной группы уже зарегистрирован, или база данных недоступна!";
+      }
     }
   }
-});
+);
 
 //Параллакс при движении мыши
 const { parallaxItems } = useAuthMouseParallax();

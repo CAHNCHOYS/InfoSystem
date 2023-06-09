@@ -43,6 +43,7 @@
       text="Удалить выбранных студентов"
       content-class="bg-red text-white"
       location="bottom center"
+      v-if="getSelectedStudentsLength"
     >
       <template #activator="{ props }">
         <v-scale-transition>
@@ -93,13 +94,19 @@
       </tr>
     </thead>
     <tbody>
-      <StudentsInfoRow
-        v-for="student in students"
-        :key="student.id"
-        :student="student"
-        :cancel-selection="removeSelection"
-        @select-student="selectStudents"
-      />
+      <transition-group
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <StudentsInfoRow
+          v-for="student in students"
+          :key="student.id"
+          :student="student"
+          :cancel-selection="removeSelection"
+          @select-student="selectStudents"
+        />
+      </transition-group>
     </tbody>
   </v-table>
 
@@ -158,13 +165,14 @@ const deleteSelectedStudents = async () => {
     selectedStudents.value = [];
     removeSelection.value = true;
   } catch (error) {
-    console.log(error);
     isDeleteError.value = true;
     setTimeout(() => (isDeleteError.value = false), 2500);
   } finally {
     isDeletingLoading.value = false;
   }
 };
+
+const { beforeEnter, enter, leave } = useListAnimations();
 </script>
 
 <style scoped></style>

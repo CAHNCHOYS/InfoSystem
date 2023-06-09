@@ -1,4 +1,4 @@
-import { object, string, number, boolean, date } from "yup";
+import { object, string, number, date } from "yup";
 
 export const useFormSchemas = () => {
   const checkNameSchema = object({
@@ -82,11 +82,32 @@ export const useFormSchemas = () => {
       .max(50, "Слишком длинный email"),
   });
 
+  const sessionSchema = object({
+    className: string()
+      .required("Поле обязательное для ввода")
+      .min(3, "Введите парвильное название предмета")
+      .max(25, "Слишком длинное название предмета"),
+    teacherName: string()
+      .required("Поле обязательное для ввода")
+      .min(3, "Введите имя преподователя")
+      .max(30, "Слишком длинное имя"),
+    time: string()
+      .required("Поле обязательное для ввода")
+      .max(12, "Слишком много символов"),
+    date: date()
+      .typeError("Введите дату")
+      .required("Поле обязательное для ввода")
+      .min("2023-01-01", "Выберете дату позднее!")
+      .max("2030-01-01", "Выберете дату пораньше!"),
+    examType: string().required("Выберете тип"),
+  });
+
   return {
     registerSchema,
     starostaLoginSchema,
     studentSchema,
     updateStarostaInfoSchema,
     studentLoginSchema,
+    sessionSchema,
   };
 };

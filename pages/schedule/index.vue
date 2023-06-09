@@ -83,6 +83,7 @@
           color="error"
           class="px-5"
           append-icon="mdi-trash-can"
+          rounded="0"
         >
           Очистить расписание
         </v-btn>

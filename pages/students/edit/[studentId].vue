@@ -124,7 +124,7 @@ import { useGroupStudentsStore } from "~/stores/groupStudents";
 import type { StudentForm } from "~/types/forms";
 
 definePageMeta({
-  middleware: "check-auth",
+  middleware: ["check-auth", "check-starosta"],
 });
 
 const { xs } = useDisplay();

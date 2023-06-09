@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    :height="smAndDown ? 70 : 80"
+    :height="smAndDown ? 65 : 80"
     color="deep-purple-darken-2"
     style="position: fixed"
     class="px-4"
@@ -9,8 +9,8 @@
       <nuxt-link class="text-white" to="/">
         <v-img
           :src="config.public.images + '/Header/students.png'"
-          width="60"
-          height="60"
+          :width="smAndDown ? 45 : 55"
+          :height="smAndDown ? 45 : 55"
           cover
           class="rounded-circle"
         />
@@ -20,6 +20,14 @@
     <v-spacer> </v-spacer>
 
     <v-divider vertical class="mr-1"></v-divider>
+
+    <nuxt-link
+      to="/auth/login"
+      class="text-white auth-link text-uppercase text-subtitle-2"
+      v-if="!authStore.isUserLoggedIn"
+    >
+      <v-btn append-icon="mdi-login"> Войти </v-btn>
+    </nuxt-link>
 
     <AccountPopoverMenu
       v-if="authStore.currentUser"
@@ -42,7 +50,7 @@
 
     <v-row v-if="!smAndDown" justify="end" class="flex-grow-0" no-gutters>
       <v-col v-for="menuItem in menuItems" :key="menuItem.link" cols="auto">
-        <nuxt-link class="text-white" :to="menuItem.link">
+        <nuxt-link class="text-white link" :to="menuItem.link">
           <v-btn
             :append-icon="menuItem.icon"
             class="text-subtitle-2 text-uppercase"
@@ -85,14 +93,20 @@ const menuItems = ref<MenuItem[]>([
   },
 
   {
-    text: "Расписание",
+    text: "Расписание занятий",
     link: "/schedule",
     icon: "mdi-clock-outline",
   },
+
   {
     text: "Посещаемость",
     link: "/attendance",
     icon: "mdi-newspaper",
+  },
+  {
+    text: "Сессия",
+    link: "/exams",
+    icon: "mdi-ab-testing",
   },
 ]);
 

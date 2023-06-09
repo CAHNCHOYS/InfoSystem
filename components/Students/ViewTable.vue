@@ -1,4 +1,5 @@
 <template>
+  {{ currentUserFullName }}
   <v-table class="bg-white py-2">
     <thead>
       <tr class="text-left d-sm-table-row d-none">
@@ -8,14 +9,21 @@
       </tr>
     </thead>
     <tbody class="py-5">
-      <tr v-for="student in students" :key="student.id">
-        <td class="d-sm-table-cell d-flex  h-auto py-3">
+      <tr
+        v-for="student in students"
+        :key="student.id"
+        class="text-subtitle-2"
+        :class="
+          [currentUserFullName === student.fullName ? 'font-weight-bold' : ''] 
+        "
+      >
+        <td class="d-sm-table-cell d-flex h-auto py-3">
           <div class="d-sm-none d-block font-weight-bold pr-2 flex-grow-1">
             Имя:
           </div>
           <div class="text-sm-left text-right">{{ student.fullName }}</div>
         </td>
-        <td class="d-sm-table-cell d-flex  h-auto py-3">
+        <td class="d-sm-table-cell d-flex h-auto py-3">
           <div class="d-sm-none d-block font-weight-bold pr-2 flex-grow-1">
             Адрес:
           </div>
@@ -43,6 +51,7 @@ import { IStudent } from "~/types/core";
 
 const props = defineProps<{
   students: IStudent[];
+  currentUserFullName: string;
 }>();
 
 const tableHeaders = ref(["Имя", "Адрес", "Телефон", "Дата рождения"]);

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
     if (authUser.role === "староста") {
       const [users] = (await dbPool.query(
-        `SELECT starosti.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName,
+        `SELECT starosti.id, firstName, lastName, middleName, CONCAT(lastName, " ", firstName, " ", middleName) AS fullName,
          password, email, university_groups.name as groupName, groupId,  isActivated
          FROM starosti INNER JOIN university_groups ON university_groups.id = starosti.groupId
              WHERE starosti.groupId = '${authUser.groupId}' LIMIT 1`
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
       return starosta;
     } else {
       const [students] =
-        (await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName,
+        (await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(lastName, " ", firstName, " ", middleName) AS fullName,
        university_groups.name as groupName, university_groups.id as groupId 
        FROM university_groups INNER JOIN group_students ON group_students.groupId = university_groups.id 
        WHERE group_students.id = ${authUser.studentId}

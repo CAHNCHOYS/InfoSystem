@@ -21,6 +21,7 @@
             :student="student"
             :attendance="findStudentAttendance(student.id)"
             :is-edit-allowed="authStore.currentUser?.role === 'староста'"
+            :current-user-full-name="authStore.currentUser?.fullName"
             @handle-attendance-add="addStudentAttendance"
             @handle-attendance-update="updateStudentAttendance"
           />
@@ -36,7 +37,7 @@
       <v-progress-linear
         indeterminate
         color="indigo"
-        height="4"
+        height="8"
         v-else-if="!actionErrorMessage"
       />
       <v-alert type="error" v-else>
@@ -136,6 +137,9 @@ const updateStudentAttendance = async (
 ) => {
   try {
     isActionLoading.value = true;
+    // await new Promise((res, rej)=> {
+    //   setTimeout(()=> res("done"),3500);
+    // })
     await $fetch("/api/attendance", {
       method: "PATCH",
       body: {
@@ -154,8 +158,8 @@ const updateStudentAttendance = async (
 
 const clearAllAttendance = async () => {
   try {
-    if (!confirm("Вы уверены что хотите очистить все пропуски? "))
-      isActionLoading.value = true;
+    if (!confirm("Вы уверены что хотите очистить все пропуски? ")) return;
+    isActionLoading.value = true;
     await $fetch("/api/attendance/" + authStore.currentUser?.groupId, {
       method: "DELETE",
     });

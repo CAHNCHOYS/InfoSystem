@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
     const { groupId } = event.context.params!;
 
     const [students] =
-      await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName,
+      await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(lastName, " ",firstName , " ", middleName) AS fullName,
        DATE_FORMAT(dateOfBirth, "%d-%m-%Y") as dateOfBirth, phone, address 
-       FROM group_students INNER JOIN university_groups on university_groups.id = group_students.groupId WHERE group_students.groupId = ${groupId}`);
+       FROM group_students INNER JOIN university_groups on university_groups.id = group_students.groupId WHERE group_students.groupId = ${groupId} ORDER BY lastName`);
 
     return students;
   } catch (error) {
@@ -20,4 +20,3 @@ export default defineEventHandler(async (event) => {
     });
   }
 });
-                                                                                                                                                                                  

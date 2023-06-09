@@ -1,15 +1,15 @@
 <template>
   <tr>
     <td
-      class="py-1 d-md-table-cell d-block h-auto text-h6"
+      class="py-2 d-md-table-cell d-block h-auto text-h6"
       :style="{
         width: !smAndDown ? '65%' : '100%',
       }"
     >
       <span class="d-md-none d-inline font-weight-bold pr-1">Имя: </span>
-      <span> {{ student.fullName }} </span>
+      <span :class="[currentUserFullName===student.fullName ? 'font-weight-bold' : '']"> {{ student.fullName }} </span>
     </td>
-    <td class="py-1 w-auto d-md-table-cell d-block h-auto">
+    <td class="py-2 w-auto d-md-table-cell d-block h-auto">
       <v-row align="center" dense>
         <v-col class="text-h6" v-show="!isUserEditing">
           <span class="d-md-none d-inline font-weight-bold pr-1"
@@ -61,6 +61,7 @@ const props = defineProps<{
   student: IStudent;
   attendance: IStudentAttendance | undefined;
   isEditAllowed: boolean;
+  currentUserFullName: string;
 }>();
 
 const emit = defineEmits<{

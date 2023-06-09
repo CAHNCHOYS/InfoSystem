@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const [students] =
-      (await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(firstName, " ", lastName, " ", middleName) AS fullName,
+      (await dbPool.query(`SELECT group_students.id, firstName, lastName, middleName, CONCAT(lastName, " ", firstName, " ", middleName) AS fullName,
        university_groups.name as groupName, university_groups.id as groupId 
        FROM university_groups INNER JOIN group_students ON group_students.groupId = university_groups.id 
        WHERE firstName = '${firstName}' AND lastName = '${lastName}' AND middleName = '${middleName}' AND groupId = ${groupId}
@@ -31,13 +31,9 @@ export default defineEventHandler(async (event) => {
         message: "Студент не найден",
       });
     }
-
     const student = students[0] as IStudentUser;
-
     student.role = "студент";
-
     const token = createAccessToken(groupId, "студент", student.id);
-
     setCookie(event, "token", token, {
       maxAge: 24 * 60 * 60,
     });

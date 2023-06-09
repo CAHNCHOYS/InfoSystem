@@ -84,6 +84,13 @@
               >
                 Войти
               </v-btn>
+            </v-col>
+            <v-col cols="12">
+              <nuxt-link to="/" class="d-block">
+                <v-btn variant="flat" block color="indigo-darken-4">
+                  На главную страницу
+                </v-btn></nuxt-link
+              >
               <p class="text-h6 text-white mt-2">
                 Нет аккаунта ?
                 <nuxt-link

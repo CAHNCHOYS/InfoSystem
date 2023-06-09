@@ -17,7 +17,9 @@ export const useGroupStudentsStore = defineStore("groupStudents", () => {
 
   function addStudent(student: IStudent) {
     students.value.push(student);
-    console.log(students.value);
+    students.value.sort((student1, student2) =>
+      student1.lastName > student2.lastName ? 1 : -1
+    );
   }
 
   function updateStudent(newStudent: IStudent) {
@@ -26,7 +28,9 @@ export const useGroupStudentsStore = defineStore("groupStudents", () => {
     );
 
     students.value[studentToUpdate] = newStudent;
-    console.log(students.value);
+    students.value.sort((student1, student2) =>
+      student1.lastName > student2.lastName ? 1 : -1
+    );
   }
 
   function deleteStudents(studentIds: number[]) {

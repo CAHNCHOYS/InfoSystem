@@ -59,15 +59,7 @@
                 </p>
               </v-alert>
             </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="firstName"
-                :error-messages="firstNameErrors"
-                label="Имя"
-                color="white"
-                class="text-white"
-              />
-            </v-col>
+
             <v-col cols="12">
               <v-text-field
                 v-model="lastName"
@@ -76,6 +68,15 @@
                 label="Фамилия"
               >
               </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="firstName"
+                :error-messages="firstNameErrors"
+                label="Имя"
+                color="white"
+                class="text-white"
+              />
             </v-col>
             <v-col cols="12">
               <v-text-field
