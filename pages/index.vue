@@ -65,12 +65,9 @@
 
 <script setup lang="ts">
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/all";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { smAndDown } = useDisplay();
-
-gsap.registerPlugin(ScrollTrigger);
 
 const config = useRuntimeConfig();
 
@@ -132,13 +129,6 @@ onMounted(() => {
     x: "-300",
     opacity: 0,
     duration: 0.5,
-
-    scrollTrigger: {
-      trigger: ".adv-title",
-      scrub: true,
-      start: "top 60%",
-      end: "+=200",
-    },
   });
   gsap.from(".advantage-col", {
     duration: 0.8,
@@ -146,12 +136,6 @@ onMounted(() => {
     ease: "power3.out",
     opacity: 0,
     stagger: 0.5,
-    scrollTrigger: {
-      trigger: ".advantage-row",
-      scrub: true,
-      start: "top 62%",
-      end: "+=500",
-    },
   });
 });
 </script>
