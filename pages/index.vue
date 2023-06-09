@@ -7,7 +7,7 @@
     <v-parallax
       :height="smAndDown ? 400 : 600"
       class="parallax"
-      :src="config.public.images + '/MainPage/parallax.jpg'"
+      :src="config.public.images + '/MainPage/Parallax.jpg'"
     ></v-parallax>
 
     <section class="py-8">
