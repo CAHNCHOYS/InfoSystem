@@ -65,6 +65,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "login",
+  middleware: "login-page-prevent",
 });
 
 const route = useRoute();

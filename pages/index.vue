@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="text-sm-h4 text-h5 mb-5">
-      Информационно-справочная система "староста и подгуппы"
+      Информационно-справочная система "Журнал старосты группы"
     </h1>
     <!-- <div class="text-h6">Информационно справочная система</div> -->
     <v-parallax
@@ -42,19 +42,17 @@
                 {{ advantage.title }}
               </p>
 
-              <p class="text-subtitle-1">
-                <v-list>
-                  <v-list-item
-                    prepend-icon="mdi-check"
-                    density="compact"
-                    v-for="action in advantage.advantageActions"
-                  >
-                    <v-list-item-title class="text-wrap">{{
-                      action
-                    }}</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </p>
+              <v-list>
+                <v-list-item
+                  prepend-icon="mdi-check"
+                  density="compact"
+                  v-for="action in advantage.advantageActions"
+                >
+                  <v-list-item-title class="text-wrap">{{
+                    action
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-card-text>
           </v-card>
         </v-col>

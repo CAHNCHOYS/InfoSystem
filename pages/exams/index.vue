@@ -49,28 +49,28 @@
         </p>
       </v-alert>
     </div>
+
+    <ExamsAddDialog
+      v-model:is-opened="isAddDialogActive"
+      :group-id="authStore.currentUser!.groupId"
+      @update-exams="refreshExams"
+    />
+
+    <ExamsDeleteDialog
+      v-model:is-opened="isDeleteDialogActive"
+      :exam="examToEdit"
+      @update-exams="refreshExams"
+      v-if="examToEdit"
+    />
+
+    <ExamsEditDialog
+      v-model:is-opened="isEditDialogActive"
+      :exam="examToEdit"
+      @update-exams="refreshExams"
+      v-if="examToEdit"
+    >
+    </ExamsEditDialog>
   </div>
-
-  <ExamsAddDialog
-    v-model:is-opened="isAddDialogActive"
-    :group-id="authStore.currentUser!.groupId"
-    @update-exams="refreshExams"
-  />
-
-  <ExamsDeleteDialog
-    v-model:is-opened="isDeleteDialogActive"
-    :exam="examToEdit"
-    @update-exams="refreshExams"
-    v-if="examToEdit"
-  />
-
-  <ExamsEditDialog
-    v-model:is-opened="isEditDialogActive"
-    :exam="examToEdit"
-    @update-exams="refreshExams"
-    v-if="examToEdit"
-  >
-  </ExamsEditDialog>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+    layoutTransition: { name: "layout", mode: "out-in" },
+
+    head: {
+      title: "Журнал старосты",
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
+    },
+  },
   css: ["vuetify/lib/styles/main.sass"],
   alias: {
     pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",

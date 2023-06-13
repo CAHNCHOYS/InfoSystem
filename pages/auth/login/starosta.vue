@@ -130,6 +130,8 @@ import type { IStarostaUser, IStudentGroup } from "~/types/core";
 
 definePageMeta({
   layout: "login",
+  middleware: "login-page-prevent",
+  
 });
 
 const config = useRuntimeConfig();

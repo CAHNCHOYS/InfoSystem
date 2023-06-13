@@ -35,7 +35,9 @@ export default defineEventHandler(async (event) => {
     student.role = "студент";
     const token = createAccessToken(groupId, "студент", student.id);
     setCookie(event, "token", token, {
-      maxAge: 24 * 60 * 60,
+      maxAge: 259200,
+
+      httpOnly: true,
     });
 
     return student;

@@ -1,5 +1,4 @@
 <template>
-  {{ currentUserFullName }}
   <v-table class="bg-white py-2">
     <thead>
       <tr class="text-left d-sm-table-row d-none">

@@ -1,102 +1,106 @@
 <template>
-  <h3 class="text-sm-h4 text-h5 mb-7">Расписание группы на текущий семестр</h3>
-  <v-card
-    color="white"
-    elevation="4"
-    class="pa-md-5 pa-2 mx-sm-0 mx-n3"
-    v-if="!scheduleFetchError"
-  >
-    <v-card-title
-      class="text-wrap text-h6 d-flex justify-space-between align-center"
+  <div>
+    <h3 class="text-sm-h4 text-h5 mb-7">
+      Расписание группы на текущий семестр
+    </h3>
+    <v-card
+      color="white"
+      elevation="4"
+      class="pa-md-5 pa-2 mx-sm-0 mx-n3"
+      v-if="!scheduleFetchError"
     >
-      <div class="flex-auto pr-2">
-        <v-switch
-          color="blue-grey"
-          v-model="currentWeek"
-          true-value="Верхняя"
-          false-value="Нижняя"
-          class="px-2"
-        >
-          <template #label>
-            <p class="text-h6 text-black">
-              Текущая неделя:
-              <span class="font-weight-bold"> {{ currentWeek }}</span>
-            </p>
-          </template>
-        </v-switch>
-      </div>
-      <div class="flex-shrink-0" v-if="!xs">
-        <v-btn
-          @click="activateGridColumns"
-          icon="mdi-view-grid-outline"
-          :color="isGridActive ? 'indigo' : 'black'"
-          variant="text"
-        />
-        <v-btn
-          @click="activateListColumns"
-          icon="mdi-view-list-outline"
-          :color="isListActive ? 'indigo' : 'black'"
-          variant="text"
-        />
-      </div>
-    </v-card-title>
+      <v-card-title
+        class="text-wrap text-h6 d-flex justify-space-between align-center"
+      >
+        <div class="flex-auto pr-2">
+          <v-switch
+            color="blue-grey"
+            v-model="currentWeek"
+            true-value="Верхняя"
+            false-value="Нижняя"
+            class="px-2"
+          >
+            <template #label>
+              <p class="text-h6 text-black">
+                Текущая неделя:
+                <span class="font-weight-bold"> {{ currentWeek }}</span>
+              </p>
+            </template>
+          </v-switch>
+        </div>
+        <div class="flex-shrink-0" v-if="!xs">
+          <v-btn
+            @click="activateGridColumns"
+            icon="mdi-view-grid-outline"
+            :color="isGridActive ? 'indigo' : 'black'"
+            variant="text"
+          />
+          <v-btn
+            @click="activateListColumns"
+            icon="mdi-view-list-outline"
+            :color="isListActive ? 'indigo' : 'black'"
+            variant="text"
+          />
+        </div>
+      </v-card-title>
 
-    <v-card-text>
-      <v-row class="mb-2">
-        <v-col
-          v-for="{ icon, day, isLoading, error } in scheduleCols"
-          :sm="isGridActive ? 6 : 12"
-          cols="12"
-          :key="day"
-        >
-          <v-sheet height="65" color="blue-grey" class="pa-4">
-            <h3 class="text-h6">{{ day }} <v-icon :icon="icon" /></h3>
-          </v-sheet>
-          <div v-if="!isLoading && !error">
-            <ScheduleClass
-              v-for="n in 6"
-              :schedule-class="findClassByDayAndOrder(day, n)"
-              :week-type="currentWeek"
-              :order="n"
-              :is-edit-allowed="authStore.currentUser?.role === 'староста'"
-              @handle-schedule-update="updateSchedule"
-              @handle-schedule-add="
-                (className, weekType) =>
-                  addSchedule(className, weekType, day, n)
-              "
-              :key="n"
-            />
-          </div>
-          <div class="border-sm d-flex justify-center pa-5" v-else-if="!error">
-            <v-progress-circular indeterminate color="indigo" size="64" />
-          </div>
+      <v-card-text>
+        <v-row class="mb-2">
+          <v-col
+            v-for="{ icon, day, isLoading, error } in scheduleCols"
+            :sm="isGridActive ? 6 : 12"
+            cols="12"
+            :key="day"
+          >
+            <v-sheet height="65" color="blue-grey" class="pa-4">
+              <h3 class="text-h6">{{ day }} <v-icon :icon="icon" /></h3>
+            </v-sheet>
+            <div v-if="!isLoading && !error">
+              <ScheduleClass
+                v-for="n in 6"
+                :schedule-class="findClassByDayAndOrder(day, n)"
+                :week-type="currentWeek"
+                :order="n"
+                :is-edit-allowed="authStore.currentUser?.role === 'староста'"
+                @handle-schedule-update="updateSchedule"
+                @handle-schedule-add="
+                  (className: string, weekType: WeekType) =>
+                    addSchedule(className, weekType, day, n)
+                "
+                :key="n"
+              />
+            </div>
+            <div class="border-sm text-center pa-5" v-else-if="!error">
+              <v-progress-circular indeterminate color="indigo" size="64" />
+            </div>
 
-          <v-alert rounded="0" type="error" v-else>
-            <p class="text-h6">{{ error }}</p>
-          </v-alert>
-        </v-col>
-      </v-row>
-      <div v-if="authStore.currentUser?.role === 'староста'">
-        <v-btn
-          @click="deleteAllSchedule"
-          variant="flat"
-          color="error"
-          class="px-5"
-          append-icon="mdi-trash-can"
-          rounded="0"
-        >
-          Очистить расписание
-        </v-btn>
-      </div>
-    </v-card-text>
-  </v-card>
+            <v-alert rounded="0" type="error" v-else>
+              <p class="text-h6">{{ error }}</p>
+            </v-alert>
+          </v-col>
+        </v-row>
+        <div v-if="authStore.currentUser?.role === 'староста'">
+          <v-btn
+            @click="deleteAllSchedule"
+            variant="flat"
+            color="error"
+            class="px-5"
+            append-icon="mdi-trash-can"
+            rounded="0"
+          >
+            Очистить расписание
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
 
-  <v-alert type="error" v-else>
-    <p class="text-h6">
-      При загрузке расписания произошла ошибка, возможно база данных недоступна,
-      повторите попытку позже или обновите страницу
-    </p>
-  </v-alert>
+    <v-alert type="error" v-else>
+      <p class="text-h6">
+        При загрузке расписания произошла ошибка, возможно база данных
+        недоступна, повторите попытку позже или обновите страницу
+      </p>
+    </v-alert>
+  </div>
 </template>
 
 <script setup lang="ts">

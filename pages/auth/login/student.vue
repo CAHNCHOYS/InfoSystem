@@ -134,6 +134,7 @@ import { useGroupStudentsStore } from "~/stores/groupStudents";
 
 definePageMeta({
   layout: "login",
+  middleware: "login-page-prevent",
 });
 
 const config = useRuntimeConfig();
