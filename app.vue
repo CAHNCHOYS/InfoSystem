@@ -19,11 +19,9 @@
 }
 .page-enter-from,
 .page-leave-to {
-   transform: translate(-15%, 0);
-   opacity: 0;
+  transform: translate(-15%, 0);
+  opacity: 0;
 }
-
-
 
 .layout-enter-active,
 .layout-leave-active {
