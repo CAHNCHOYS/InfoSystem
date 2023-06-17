@@ -9,7 +9,7 @@ export const createAccessToken = (
   studentId?: number
 ) => {
   const token = jwt.sign({ groupId, role, studentId }, config.JWT_ACCESS_KEY, {
-    expiresIn: "3h",
+    expiresIn: "3d",
   });
 
   return token;

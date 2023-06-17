@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="text-sm-h3 text-h5 mb-sm-7 mb-5">Список группы</h3>
+    <h3 class="text-sm-h3 text-h4 mb-sm-7 mb-5">Список группы</h3>
     <v-card
       elevation="4"
       rounded="0"
@@ -34,7 +34,7 @@
 import { useGroupStudentsStore } from "~/stores/groupStudents";
 import { useAuthStore } from "~/stores/auth";
 definePageMeta({
-  middleware: "check-auth",
+  middleware: ["check-auth"],
 });
 
 const authStore = useAuthStore();

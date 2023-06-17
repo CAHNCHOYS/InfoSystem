@@ -14,6 +14,7 @@
         :key="menuItem.link"
         :value="menuItem.link"
         :prepend-icon="menuItem.icon"
+    
       >
         <v-list-item-title class="text-h6">
           <nuxt-link

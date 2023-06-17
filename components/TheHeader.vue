@@ -17,7 +17,7 @@
       </nuxt-link>
     </div>
 
-    <v-spacer> </v-spacer>
+    <v-spacer />
 
     <v-divider vertical class="mr-1"></v-divider>
 
@@ -50,7 +50,11 @@
 
     <v-row v-if="!smAndDown" justify="end" class="flex-grow-0" no-gutters>
       <v-col v-for="menuItem in menuItems" :key="menuItem.link" cols="auto">
-        <nuxt-link class="text-white link" :to="menuItem.link">
+        <nuxt-link
+          class="text-white link"
+          active-class="active-link"
+          :to="menuItem.link"
+        >
           <v-btn
             :append-icon="menuItem.icon"
             class="text-subtitle-2 text-uppercase"
@@ -118,4 +122,8 @@ const handleLogout = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.active-link button {
+  background-color: #b388ff60;
+}
+</style>
